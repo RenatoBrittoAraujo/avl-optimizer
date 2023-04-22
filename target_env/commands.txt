@@ -1,0 +1,5 @@
+LOAD t1.avl
+OPER
+X
+ST
+out1.txt
