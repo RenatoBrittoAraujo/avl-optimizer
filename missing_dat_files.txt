@@ -1,0 +1,8 @@
+w_NACA4412.dat    
+FLAPNOVO.dat        
+eh_NACA3312_inv.dat
+ev_BELL540.dat
+
+#eh_GOE285_inv.dat
+#ev_EPPLER472.dat
+#ev_S9033.dat

@@ -51,13 +51,19 @@ class AVL():
 # reader writer
 
 
-class AVLFileParser():
+class FileParser():
+    txt: str
 
     def __init__(self, arquivo: str):
-        pass
+        self.txt = arquivo
+
+
+class AVLFileParser(FileParser):
+    def __init__(self, arquivo: str):
+        super().__init__(arquivo)
 
     def parse_into_file(self) -> str:
-        pass
+        return self.txt
 
     def get_value(self, key: str):
         pass
@@ -68,10 +74,9 @@ class AVLFileParser():
 # reader
 
 
-class AVLResultParser():
-
-    def __init__(self, arquivo: str = ""):
-        pass
+class AVLResultParser(FileParser):
+    def __init__(self, arquivo: str):
+        super().__init__(arquivo)
 
     def parse_into_file(self) -> str:
         pass
@@ -172,3 +177,7 @@ def main():
         print("success, optimal configuration in \"geometria_otima.txt\"")
     else:
         print("error: failed to find optimal configuration")
+
+
+if __name__ == "__main__":
+    main()
