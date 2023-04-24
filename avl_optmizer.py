@@ -158,8 +158,8 @@ def test():
 
 
 def main():
+    avl = AVL(AVL_ENV_PATH, AVL_OUTPUT_FILE,  AVL_INPUT_FILE)
 
-    avl = AVL()
     evaluator = Evaluator(
         [
             "corda",
