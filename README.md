@@ -1,3 +1,33 @@
+
+## Arquivos & Pastas
+
+- `avl_optimizer.py`: O próprio, o brabo, o script.
+- `geometria.avl`: Arquivo de entrada do AVL, no seu formato original. Edite aqui.
+- `otimizado.avl`: Arquivo de saída do script, no seu formato original. Aqui estará o resultado do programa.
+- `output.txt`: Saída do programa AVL ao usar comando `ST`.
+- `avl_files/`:  Arquivos da internet pra auxiliar o desenvolvimento. Documentação do AVL.
+- `target_env/`:  Arquivos que compõem ambiente alvo do avl (aka. uma réplica do seu computador)
+- `env/`: Arquivos que compõem ambiente atual que o avl será executado.
+- `input_files/`: Arquivos `.avl` de input pra testar o programa.
+
+## Funcionamento do progama
+
+Note que na pasta `env` contém o executável `avl`, bem como os arquivos `.dat`
+e o arquivo de entrada `./t1.avl`.
+
+O script de python instanciando, no mesmo terminal que é rodado, o avl usando
+o comando `./avl`. Os comandos são passados por string para o programa via string.
+
+## Funcionamento do AVL
+
+1. Vá pra pasta `./avl_files/runs`
+2. Rode `./avl`
+3. Digite `LOAD al.avl`
+4. Digite `OPER`
+5. Digite `X`
+6. Digite `ST`
+   1. Coloque o path do arquivo de saída, como `test1.txt`
+
 ## Descrição de projeto
 
 Download do AVL (linux, windows, mac): https://web.mit.edu/drela/Public/web/avl/
@@ -73,3 +103,18 @@ Como vc consegue o arqvuio? - fazendo na mao, com variaveis
 
 INVESTIGAR
 - O que é o comando dentro do AVL chamado RUN CASE?
+
+## TODO
+
+- Executa instancia do programa em terminal virtual
+- Envia algum comando pro terminal virtual
+- Lê algo do terminal virtual
+- Escrever parser geral do arquivo de entrada
+- Escrever parser geral do arquivo de saída
+
+## DONE
+
+- Scaffold codigo
+- Achar executável AVL
+- Achar documentação AVL
+- Achar exemplos de entrada e saída AVL

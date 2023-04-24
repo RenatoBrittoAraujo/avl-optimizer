@@ -1,4 +1,11 @@
 import subprocess
+from os.path import exists
+
+# em teoria, isso não deveria ser mudado. se vc precisa
+# mudar isso, é porque não tá usando os parametros do programa
+AVL_ENV_PATH = "env/"
+AVL_INPUT_FILE = "t1.avl"
+AVL_OUTPUT_FILE = "out.txt"
 
 
 def write_file(target, content):
@@ -20,33 +27,60 @@ def delete_file(target):
 
 
 class AVL():
+    command_list: str
+    avl_folder_path: str
+    input_file: str
+    output_file: str
+    overwrite_any: bool
 
-    def __init__(self):
-        pass
+    def __init__(self, avl_folder_path: str, output_file: str, input_file: str, overwrite_any: bool = False):
+        if not avl_folder_path.endswith("/"):
+            avl_folder_path += "/"
+        if not input_file.endswith(".avl"):
+            raise Exception("error: file '" +
+                            input_file + "' is not .avl")
 
-    def send_command(self, cmd) -> bool:
-        # exec("sei la")
-        pass
+        self.avl_folder_path = avl_folder_path
+        self.input_file = input_file
+        self.output_file = output_file
+        self.command_list = ""
+        self.overwrite_any = overwrite_any
 
-    def read_last(self) -> str:
-        # exec("sei la")
-        pass
+    def exec(self):
+        inp = self.avl_folder_path + self.input_file
+        out = self.avl_folder_path + self.output_file
 
-    def analyse(self, file: str) -> str:
-        write_file("temp_input.txt", file)
+        if exists(out):
+            if self.overwrite_any:
+                delete_file(out)
+            else:
+                raise Exception("error: file '" + out + "' is not .avl")
 
-        self.send_command("LOAD temp_input.txt")
-        self.send_command("OPER")
-        self.send_command("X")
-        self.send_command("ST")
-        self.send_command("temp_output.txt")
+        if not exists(inp):
+            raise Exception("error: avl input file " + inp + " does not exist")
 
-        res = read_file("temp_output.txt")
+        if not self.command_list:
+            raise Exception("error: no avl commands have been provided")
 
-        delete_file("temp_input.txt")
-        delete_file("temp_output.txt")
+        return subprocess.run(
+            "./avl", cwd="env", input=bytes(self.command_list, encoding="utf-8"))
 
-        return res
+    def add_command(self, cmd: str):
+        self.command_list += cmd + '\n'
+
+    def analyse_v1(self) -> str:
+        commands = """
+        LOAD {input_file}
+        OPER
+        X
+        ST
+        {output_file}
+        """.format(input_file=self.input_file, output_file=self.output_file)
+
+        for line in commands.split('\n'):
+            self.add_command(line)
+
+        return self.exec()
 
 # reader writer
 
@@ -118,6 +152,11 @@ class Evaluator():
         pass
 
 
+def test():
+    avl = AVL(AVL_ENV_PATH, AVL_OUTPUT_FILE,  AVL_INPUT_FILE)
+    avl.analyse_v1()
+
+
 def main():
 
     avl = AVL()
@@ -180,4 +219,5 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    # main()
+    test()
