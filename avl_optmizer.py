@@ -120,7 +120,10 @@ class FileParser():
     def get_value(self, key: str):
         d = self.structure
         for label in key.split("."):
-            d = d[label]
+            if type(d) == list:
+                d = d[int(label)]
+            else:
+                d = d[label]
         return d
 
     def set_values(self, keys: list[str], values: list[str]):
@@ -184,7 +187,11 @@ def test():
     # avl = AVL(AVL_ENV_PATH, AVL_OUTPUT_FILE,  AVL_INPUT_FILE)
     # avl.analyse_v1()
     with open("geometria.txt") as f:
-        print(AVLFileParser(arquivo=f.read()).structure)
+        x = AVLFileParser(arquivo=f.read())
+        base_lbl = "children.sections"
+        for i in range(len(list(x.get_value(base_lbl)))):
+            lbl = base_lbl + "." + str(i)
+            print(lbl, "=", x.get_value(lbl))
 
 
 def main():
@@ -249,5 +256,5 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
-    # test()
+    # main()
+    test()
