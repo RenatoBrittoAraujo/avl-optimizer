@@ -1,11 +1,24 @@
 import subprocess
 from os.path import exists
+import copy
+
+from avl_parse_util import parse_avl_file
 
 # em teoria, isso não deveria ser mudado. se vc precisa
 # mudar isso, é porque não tá usando os parametros do programa
 AVL_ENV_PATH = "env/"
 AVL_INPUT_FILE = "t1.avl"
 AVL_OUTPUT_FILE = "out.txt"
+AVL_INPUT_KEYWORDS = [
+    "SECTION", "SURFACE", "AFILE", "CLAF", "COMPONENT", "TRANSLATE", "ANGLE", "SCALE", "YDUPLICATE", "CONTROL", "NOWAKE"
+]
+
+
+def to_float(v: str) -> tuple[bool, float]:
+    try:
+        return True, float(v)
+    except Exception:
+        return False, 0.0
 
 
 def write_file(target, content):
@@ -82,47 +95,62 @@ class AVL():
 
         return self.exec()
 
-# reader writer
-
 
 class FileParser():
-    txt: str
+    structure: dict
 
-    def __init__(self, arquivo: str):
-        self.txt = arquivo
+    def __init__(self, arquivo: str = None, structure: dict = None):
+        if arquivo:
+            self.structure = self.parse_from_file(arquivo)
+        elif structure:
+            self.structure = copy.deepcopy(structure)
+        else:
+            raise Exception("error: no file or structure provided")
+
+    def set_value(self, key: str, value: str):
+        last_l = None
+        last_d = None
+        d = self.structure
+        for label in key.split("."):
+            last_l = label
+            last_d = d
+            d = d[label]
+        last_d[last_l] = value
+
+    def get_value(self, key: str):
+        d = self.structure
+        for label in key.split("."):
+            d = d[label]
+        return d
+
+    def set_values(self, keys: list[str], values: list[str]):
+        for key, value in keys, values:
+            self.set_values(key, value)
+
+    def get_values(self, keys: list[str]):
+        return [self.get_value(key) for key in keys]
+
+    def parse_into_file(self) -> str:
+        raise NotImplementedError
+
+    def parse_from_file(self, arquivo: str):
+        raise NotImplementedError
 
 
 class AVLFileParser(FileParser):
-    def __init__(self, arquivo: str):
-        super().__init__(arquivo)
-
     def parse_into_file(self) -> str:
-        return self.txt
+        raise NotImplementedError
 
-    def get_value(self, key: str):
-        pass
-
-    def set_value(self, key: str, value: str):
-        pass
-
-# reader
+    def parse_from_file(self, arquivo: str):
+        return parse_avl_file(arquivo)
 
 
 class AVLResultParser(FileParser):
-    def __init__(self, arquivo: str):
-        super().__init__(arquivo)
-
     def parse_into_file(self) -> str:
-        pass
+        raise NotImplementedError
 
-    def get_value(self, key: str) -> str:
-        pass
-
-    def get_values(self, keys: list[str]) -> list[str]:
-        pass
-
-    def set_template(self, org: 'AVLResultParser'):
-        pass
+    def parse_from_file(self, arquivo: str) -> str:
+        raise NotImplementedError
 
 
 class Evaluator():
@@ -153,8 +181,10 @@ class Evaluator():
 
 
 def test():
-    avl = AVL(AVL_ENV_PATH, AVL_OUTPUT_FILE,  AVL_INPUT_FILE)
-    avl.analyse_v1()
+    # avl = AVL(AVL_ENV_PATH, AVL_OUTPUT_FILE,  AVL_INPUT_FILE)
+    # avl.analyse_v1()
+    with open("geometria.txt") as f:
+        print(AVLFileParser(arquivo=f.read()).structure)
 
 
 def main():
@@ -190,7 +220,7 @@ def main():
 
         params = queue.pop()
 
-        new_fp = AVLFileParser()
+        new_fp = AVLFileParser(str)
         new_fp.set_template(fp)
 
         for param in params:

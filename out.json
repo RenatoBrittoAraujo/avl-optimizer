@@ -1,0 +1,468 @@
+{
+    "type": "root",
+    "title": "WING_2022",
+    "children": {
+        "Mach": "0.00",
+        "IYsym": "0",
+        "IZsym": "0",
+        "Zsym": "0",
+        "Sref": "0.390345",
+        "Cref": "0.281",
+        "Bref": "1.473",
+        "Xref": "0.0",
+        "Yref": "0.0",
+        "Zref": "-0.07",
+        "CDp": "0.0",
+        "surfaces": [
+            {
+                "type": "SURFACE",
+                "title": "Right_Wing",
+                "children": {
+                    "Nchordwise": "19",
+                    "Cspace": "1.0",
+                    "Nspanwise": "22",
+                    "Sspace": "1.0",
+                    "YDUPLICATE": "0.0",
+                    "ANGLE": "0.0",
+                    "SCALE": [
+                        "1.0",
+                        "1.0",
+                        "1.0"
+                    ],
+                    "TRANSLATE": [
+                        "-0.0576",
+                        "0.0",
+                        "0.0"
+                    ]
+                }
+            },
+            {
+                "type": "SURFACE",
+                "title": "Right_flap",
+                "children": {
+                    "Nchordwise": "9",
+                    "Cspace": "1.0",
+                    "Nspanwise": "22",
+                    "Sspace": "1.0",
+                    "YDUPLICATE": "0.0",
+                    "ANGLE": "0.0",
+                    "SCALE": [
+                        "1.0",
+                        "1.0",
+                        "1.0"
+                    ],
+                    "TRANSLATE": [
+                        "-0.0576",
+                        "0.0",
+                        "0.0"
+                    ]
+                }
+            },
+            {
+                "type": "SURFACE",
+                "title": "emp_horizontal",
+                "children": {
+                    "Nchordwise": "26",
+                    "Cspace": "1.0",
+                    "Nspanwise": "8",
+                    "Sspace": "1.0",
+                    "YDUPLICATE": "0.0",
+                    "ANGLE": "-3.0",
+                    "SCALE": [
+                        "1.0",
+                        "1.0",
+                        "1.0"
+                    ],
+                    "TRANSLATE": [
+                        "0.76",
+                        "0.0",
+                        "0.11"
+                    ]
+                }
+            },
+            {
+                "type": "SURFACE",
+                "title": "emp_vertical",
+                "children": {
+                    "Nchordwise": "16",
+                    "Cspace": "1.0",
+                    "Nspanwise": "13",
+                    "Sspace": "1.0",
+                    "SCALE": [
+                        "1.0",
+                        "1.0",
+                        "1.0"
+                    ],
+                    "TRANSLATE": [
+                        "0.652242",
+                        "0.0",
+                        "0.14"
+                    ]
+                }
+            },
+            {
+                "type": "SURFACE",
+                "title": "Fuselage H",
+                "children": {
+                    "Nchordwise": "20",
+                    "Cspace": "1",
+                    "Nspanwise": "10",
+                    "Sspace": "1",
+                    "COMPONENT": "1007",
+                    "YDUPLICATE": "0.0",
+                    "SCALE": [
+                        "1.0",
+                        "1.0",
+                        "1.0"
+                    ],
+                    "TRANSLATE": [
+                        "-0.22",
+                        "0.0",
+                        "-0.067"
+                    ]
+                }
+            },
+            {
+                "type": "SURFACE",
+                "title": "Fuselage V",
+                "children": {
+                    "Nchordwise": "20",
+                    "Cspace": "1",
+                    "Nspanwise": "10",
+                    "Sspace": "1",
+                    "COMPONENT": "1007",
+                    "SCALE": [
+                        "1.0",
+                        "1.0",
+                        "1.0"
+                    ],
+                    "TRANSLATE": [
+                        "-0.22",
+                        "0.0",
+                        "-0.015"
+                    ]
+                }
+            }
+        ],
+        "sections": [
+            {
+                "type": "SECTION",
+                "title": "SECTION",
+                "children": {
+                    "Xle": "0.00",
+                    "Yle": "0.0",
+                    "Zle": "0.0",
+                    "Chord": "0.250",
+                    "Ainc": "0.0",
+                    "Nspanwise": "0",
+                    "Sspace": "0",
+                    "AFILE": "w_NACA4412.dat",
+                    "CLAF": "1.3"
+                }
+            },
+            {
+                "type": "SECTION",
+                "title": "SECTION",
+                "children": {
+                    "Xle": "0.00",
+                    "Yle": "0.2455",
+                    "Zle": "0.0",
+                    "Chord": "0.250",
+                    "Ainc": "0.0",
+                    "Nspanwise": "0",
+                    "Sspace": "0",
+                    "AFILE": "w_NACA4412.dat",
+                    "CLAF": "1.3"
+                }
+            },
+            {
+                "type": "SECTION",
+                "title": "SECTION",
+                "children": {
+                    "Xle": "0.000",
+                    "Yle": "0.7365",
+                    "Zle": "0.0",
+                    "Chord": "0.2100",
+                    "Ainc": "0.0",
+                    "Nspanwise": "0",
+                    "Sspace": "0",
+                    "AFILE": "w_NACA4412.dat",
+                    "CLAF": "1.3"
+                }
+            },
+            {
+                "type": "SECTION",
+                "title": "SECTION",
+                "children": {
+                    "Xle": "0.254",
+                    "Yle": "0.0",
+                    "Zle": "-0.005",
+                    "Chord": "0.05",
+                    "Ainc": "0.0",
+                    "Nspanwise": "0",
+                    "Sspace": "0",
+                    "AFILE": "FLAPNOVO.dat",
+                    "controls": [
+                        {
+                            "type": "CONTROL",
+                            "title": "CONTROL",
+                            "children": {
+                                "Cname": "flaperon",
+                                "Cgain": "1.0",
+                                "Xhinge": "0.0",
+                                "HingeVec": [
+                                    "0.0",
+                                    "1.0",
+                                    "0.0"
+                                ],
+                                "SgnDup": "-1.0"
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "type": "SECTION",
+                "title": "SECTION",
+                "children": {
+                    "Xle": "0.254",
+                    "Yle": "0.2455",
+                    "Zle": "-0.005",
+                    "Chord": "0.05",
+                    "Ainc": "0.0",
+                    "Nspanwise": "0",
+                    "Sspace": "0",
+                    "AFILE": "FLAPNOVO.dat",
+                    "controls": [
+                        {
+                            "type": "CONTROL",
+                            "title": "CONTROL",
+                            "children": {
+                                "Cname": "flaperon",
+                                "Cgain": "1.0",
+                                "Xhinge": "0.0",
+                                "HingeVec": [
+                                    "0.0",
+                                    "1.0",
+                                    "0.0"
+                                ],
+                                "SgnDup": "-1.0"
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "type": "SECTION",
+                "title": "SECTION",
+                "children": {
+                    "Xle": "0.2140",
+                    "Yle": "0.7365",
+                    "Zle": "0.0",
+                    "Chord": "0.05",
+                    "Ainc": "0.0",
+                    "Nspanwise": "0",
+                    "Sspace": "0",
+                    "AFILE": "FLAPNOVO.dat",
+                    "controls": [
+                        {
+                            "type": "CONTROL",
+                            "title": "CONTROL",
+                            "children": {
+                                "Cname": "flaperon",
+                                "Cgain": "1.0",
+                                "Xhinge": "0.0",
+                                "HingeVec": [
+                                    "0.0",
+                                    "1.0",
+                                    "0.0"
+                                ],
+                                "SgnDup": "-1.0"
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "type": "SECTION",
+                "title": "SECTION",
+                "children": {
+                    "Xle": "-0.05",
+                    "Yle": "0.0",
+                    "Zle": "0",
+                    "Chord": "0.20",
+                    "Ainc": "0.0",
+                    "AFILE": "eh_NACA3312_inv.dat",
+                    "controls": [
+                        {
+                            "type": "CONTROL",
+                            "title": "CONTROL",
+                            "children": {
+                                "name": "elevator",
+                                "gain": "1.0",
+                                "Xhinge": "0.60",
+                                "XYZhvec": [
+                                    "0.0",
+                                    "1.0",
+                                    "0.0"
+                                ],
+                                "SgnDup": "+1"
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "type": "SECTION",
+                "title": "SECTION",
+                "children": {
+                    "Xle": "-0.05",
+                    "Yle": "0.2455",
+                    "Zle": "0",
+                    "Chord": "0.20",
+                    "Ainc": "0.0",
+                    "AFILE": "eh_NACA3312_inv.dat",
+                    "controls": [
+                        {
+                            "type": "CONTROL",
+                            "title": "CONTROL",
+                            "children": {
+                                "name": "elevator",
+                                "gain": "1.0",
+                                "Xhinge": "0.60",
+                                "XYZhvec": [
+                                    "0.0",
+                                    "1.0",
+                                    "0.0"
+                                ],
+                                "SgnDup": "+1"
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "type": "SECTION",
+                "title": "SECTION",
+                "children": {
+                    "Xle": "0.09",
+                    "Yle": "0",
+                    "Zle": "0.21",
+                    "Chord": "0.095",
+                    "Ainc": "0.0",
+                    "AFILE": "ev_BELL540.dat",
+                    "controls": [
+                        {
+                            "type": "CONTROL",
+                            "title": "CONTROL",
+                            "children": {
+                                "name": "rudder",
+                                "gain": "1.0",
+                                "Xhinge": "0.50",
+                                "XYZhvec": [
+                                    "0.0",
+                                    "0.0",
+                                    "1.0"
+                                ]
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "type": "SECTION",
+                "title": "SECTION",
+                "children": {
+                    "Xle": "0",
+                    "Yle": "0",
+                    "Zle": "0",
+                    "Chord": "0.193",
+                    "Ainc": "0.0",
+                    "AFILE": "ev_BELL540.dat",
+                    "controls": [
+                        {
+                            "type": "CONTROL",
+                            "title": "CONTROL",
+                            "children": {
+                                "name": "rudder",
+                                "gain": "1.0",
+                                "Xhinge": "0.50",
+                                "XYZhvec": [
+                                    "0.0",
+                                    "0.0",
+                                    "1.0"
+                                ]
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "type": "SECTION",
+                "title": "SECTION",
+                "children": {
+                    "Xle": "0.0",
+                    "Yle": "0.0",
+                    "Zle": "0.0",
+                    "Chord": "0.403",
+                    "Ainc": "0"
+                }
+            },
+            {
+                "type": "SECTION",
+                "title": "SECTION",
+                "children": {
+                    "Xle": "0.0",
+                    "Yle": "0.026",
+                    "Zle": "0.0",
+                    "Chord": "0.403",
+                    "Ainc": "0"
+                }
+            },
+            {
+                "type": "SECTION",
+                "title": "SECTION",
+                "children": {
+                    "Xle": "0.163",
+                    "Yle": "0.055",
+                    "Zle": "0.0",
+                    "Chord": "0.240",
+                    "Ainc": "0"
+                }
+            },
+            {
+                "type": "SECTION",
+                "title": "SECTION",
+                "children": {
+                    "Xle": "0.0",
+                    "Yle": "0.0",
+                    "Zle": "0.0",
+                    "Chord": "0.403",
+                    "Ainc": "0"
+                }
+            },
+            {
+                "type": "SECTION",
+                "title": "SECTION",
+                "children": {
+                    "Xle": "0.0",
+                    "Yle": "0.0",
+                    "Zle": "-0.052",
+                    "Chord": "0.403",
+                    "Ainc": "0"
+                }
+            },
+            {
+                "type": "SECTION",
+                "title": "SECTION",
+                "children": {
+                    "Xle": "0.163",
+                    "Yle": "0.0",
+                    "Zle": "-0.150",
+                    "Chord": "0.240",
+                    "Ainc": "0"
+                }
+            }
+        ]
+    }
+}
