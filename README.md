@@ -121,7 +121,7 @@ Os inputs são:
 
 Os outputs são:
 | tag                  | significado | certeza |
-| -------------------- | ----------- |
+| -------------------- | ----------- | ------- |
 | `Cltot`              | ??          | true    |
 | `Cl'tot`             | ??          | true    |
 | `Cmtot`              | ??          | true    |
