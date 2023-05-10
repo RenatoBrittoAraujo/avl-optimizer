@@ -119,6 +119,17 @@ Os inputs são:
 | `children.surfaces.Right_Wing.children.sections.*.children.Zle`   | [0, n] | ??          |
 | `children.surfaces.Right_Wing.children.sections.*.children.Chord` | [0, n] | ??          |
 
+SURFACES A SE ANALISAR:
+a idéia é ficar a asa e mexer só na empenagem
+pelo menos por agora
+a asa vem de aerodin
+a range vai ser bem limitada por conta da caixa
+a empenagem é a cauda basicamente
+saqueei, então ignorar as "wings" só focar nas outras superfícies
+emp vertical e horizontal no arquivo
+isso, e os flaps também
+
+
 Os outputs são:
 | tag                  | significado | certeza |
 | -------------------- | ----------- | ------- |
