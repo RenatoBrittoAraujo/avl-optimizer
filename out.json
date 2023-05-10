@@ -13,8 +13,8 @@
         "Yref": "0.0",
         "Zref": "-0.07",
         "CDp": "0.0",
-        "surfaces": [
-            {
+        "surfaces": {
+            "Right_Wing": {
                 "type": "SURFACE",
                 "title": "Right_Wing",
                 "children": {
@@ -36,7 +36,7 @@
                     ]
                 }
             },
-            {
+            "Right_flap": {
                 "type": "SURFACE",
                 "title": "Right_flap",
                 "children": {
@@ -58,7 +58,7 @@
                     ]
                 }
             },
-            {
+            "emp_horizontal": {
                 "type": "SURFACE",
                 "title": "emp_horizontal",
                 "children": {
@@ -80,7 +80,7 @@
                     ]
                 }
             },
-            {
+            "emp_vertical": {
                 "type": "SURFACE",
                 "title": "emp_vertical",
                 "children": {
@@ -100,7 +100,7 @@
                     ]
                 }
             },
-            {
+            "Fuselage H": {
                 "type": "SURFACE",
                 "title": "Fuselage H",
                 "children": {
@@ -122,7 +122,7 @@
                     ]
                 }
             },
-            {
+            "Fuselage V": {
                 "type": "SURFACE",
                 "title": "Fuselage V",
                 "children": {
@@ -143,11 +143,11 @@
                     ]
                 }
             }
-        ],
-        "sections": [
-            {
+        },
+        "sections": {
+            "SECTION_1": {
                 "type": "SECTION",
-                "title": "SECTION",
+                "title": "SECTION_1",
                 "children": {
                     "Xle": "0.00",
                     "Yle": "0.0",
@@ -160,9 +160,9 @@
                     "CLAF": "1.3"
                 }
             },
-            {
+            "SECTION_2": {
                 "type": "SECTION",
-                "title": "SECTION",
+                "title": "SECTION_2",
                 "children": {
                     "Xle": "0.00",
                     "Yle": "0.2455",
@@ -175,9 +175,9 @@
                     "CLAF": "1.3"
                 }
             },
-            {
+            "SECTION_3": {
                 "type": "SECTION",
-                "title": "SECTION",
+                "title": "SECTION_3",
                 "children": {
                     "Xle": "0.000",
                     "Yle": "0.7365",
@@ -190,9 +190,9 @@
                     "CLAF": "1.3"
                 }
             },
-            {
+            "SECTION_4": {
                 "type": "SECTION",
-                "title": "SECTION",
+                "title": "SECTION_4",
                 "children": {
                     "Xle": "0.254",
                     "Yle": "0.0",
@@ -202,10 +202,10 @@
                     "Nspanwise": "0",
                     "Sspace": "0",
                     "AFILE": "FLAPNOVO.dat",
-                    "controls": [
-                        {
+                    "controls": {
+                        "CONTROL_1": {
                             "type": "CONTROL",
-                            "title": "CONTROL",
+                            "title": "CONTROL_1",
                             "children": {
                                 "Cname": "flaperon",
                                 "Cgain": "1.0",
@@ -218,12 +218,12 @@
                                 "SgnDup": "-1.0"
                             }
                         }
-                    ]
+                    }
                 }
             },
-            {
+            "SECTION_5": {
                 "type": "SECTION",
-                "title": "SECTION",
+                "title": "SECTION_5",
                 "children": {
                     "Xle": "0.254",
                     "Yle": "0.2455",
@@ -233,10 +233,10 @@
                     "Nspanwise": "0",
                     "Sspace": "0",
                     "AFILE": "FLAPNOVO.dat",
-                    "controls": [
-                        {
+                    "controls": {
+                        "CONTROL_1": {
                             "type": "CONTROL",
-                            "title": "CONTROL",
+                            "title": "CONTROL_1",
                             "children": {
                                 "Cname": "flaperon",
                                 "Cgain": "1.0",
@@ -249,12 +249,12 @@
                                 "SgnDup": "-1.0"
                             }
                         }
-                    ]
+                    }
                 }
             },
-            {
+            "SECTION_6": {
                 "type": "SECTION",
-                "title": "SECTION",
+                "title": "SECTION_6",
                 "children": {
                     "Xle": "0.2140",
                     "Yle": "0.7365",
@@ -264,10 +264,10 @@
                     "Nspanwise": "0",
                     "Sspace": "0",
                     "AFILE": "FLAPNOVO.dat",
-                    "controls": [
-                        {
+                    "controls": {
+                        "CONTROL_1": {
                             "type": "CONTROL",
-                            "title": "CONTROL",
+                            "title": "CONTROL_1",
                             "children": {
                                 "Cname": "flaperon",
                                 "Cgain": "1.0",
@@ -280,12 +280,12 @@
                                 "SgnDup": "-1.0"
                             }
                         }
-                    ]
+                    }
                 }
             },
-            {
+            "SECTION_7": {
                 "type": "SECTION",
-                "title": "SECTION",
+                "title": "SECTION_7",
                 "children": {
                     "Xle": "-0.05",
                     "Yle": "0.0",
@@ -293,10 +293,10 @@
                     "Chord": "0.20",
                     "Ainc": "0.0",
                     "AFILE": "eh_NACA3312_inv.dat",
-                    "controls": [
-                        {
+                    "controls": {
+                        "CONTROL_1": {
                             "type": "CONTROL",
-                            "title": "CONTROL",
+                            "title": "CONTROL_1",
                             "children": {
                                 "name": "elevator",
                                 "gain": "1.0",
@@ -309,12 +309,12 @@
                                 "SgnDup": "+1"
                             }
                         }
-                    ]
+                    }
                 }
             },
-            {
+            "SECTION_8": {
                 "type": "SECTION",
-                "title": "SECTION",
+                "title": "SECTION_8",
                 "children": {
                     "Xle": "-0.05",
                     "Yle": "0.2455",
@@ -322,10 +322,10 @@
                     "Chord": "0.20",
                     "Ainc": "0.0",
                     "AFILE": "eh_NACA3312_inv.dat",
-                    "controls": [
-                        {
+                    "controls": {
+                        "CONTROL_1": {
                             "type": "CONTROL",
-                            "title": "CONTROL",
+                            "title": "CONTROL_1",
                             "children": {
                                 "name": "elevator",
                                 "gain": "1.0",
@@ -338,12 +338,12 @@
                                 "SgnDup": "+1"
                             }
                         }
-                    ]
+                    }
                 }
             },
-            {
+            "SECTION_9": {
                 "type": "SECTION",
-                "title": "SECTION",
+                "title": "SECTION_9",
                 "children": {
                     "Xle": "0.09",
                     "Yle": "0",
@@ -351,10 +351,10 @@
                     "Chord": "0.095",
                     "Ainc": "0.0",
                     "AFILE": "ev_BELL540.dat",
-                    "controls": [
-                        {
+                    "controls": {
+                        "CONTROL_1": {
                             "type": "CONTROL",
-                            "title": "CONTROL",
+                            "title": "CONTROL_1",
                             "children": {
                                 "name": "rudder",
                                 "gain": "1.0",
@@ -366,12 +366,12 @@
                                 ]
                             }
                         }
-                    ]
+                    }
                 }
             },
-            {
+            "SECTION_10": {
                 "type": "SECTION",
-                "title": "SECTION",
+                "title": "SECTION_10",
                 "children": {
                     "Xle": "0",
                     "Yle": "0",
@@ -379,10 +379,10 @@
                     "Chord": "0.193",
                     "Ainc": "0.0",
                     "AFILE": "ev_BELL540.dat",
-                    "controls": [
-                        {
+                    "controls": {
+                        "CONTROL_1": {
                             "type": "CONTROL",
-                            "title": "CONTROL",
+                            "title": "CONTROL_1",
                             "children": {
                                 "name": "rudder",
                                 "gain": "1.0",
@@ -394,12 +394,12 @@
                                 ]
                             }
                         }
-                    ]
+                    }
                 }
             },
-            {
+            "SECTION_11": {
                 "type": "SECTION",
-                "title": "SECTION",
+                "title": "SECTION_11",
                 "children": {
                     "Xle": "0.0",
                     "Yle": "0.0",
@@ -408,9 +408,9 @@
                     "Ainc": "0"
                 }
             },
-            {
+            "SECTION_12": {
                 "type": "SECTION",
-                "title": "SECTION",
+                "title": "SECTION_12",
                 "children": {
                     "Xle": "0.0",
                     "Yle": "0.026",
@@ -419,9 +419,9 @@
                     "Ainc": "0"
                 }
             },
-            {
+            "SECTION_13": {
                 "type": "SECTION",
-                "title": "SECTION",
+                "title": "SECTION_13",
                 "children": {
                     "Xle": "0.163",
                     "Yle": "0.055",
@@ -430,9 +430,9 @@
                     "Ainc": "0"
                 }
             },
-            {
+            "SECTION_14": {
                 "type": "SECTION",
-                "title": "SECTION",
+                "title": "SECTION_14",
                 "children": {
                     "Xle": "0.0",
                     "Yle": "0.0",
@@ -441,9 +441,9 @@
                     "Ainc": "0"
                 }
             },
-            {
+            "SECTION_15": {
                 "type": "SECTION",
-                "title": "SECTION",
+                "title": "SECTION_15",
                 "children": {
                     "Xle": "0.0",
                     "Yle": "0.0",
@@ -452,9 +452,9 @@
                     "Ainc": "0"
                 }
             },
-            {
+            "SECTION_16": {
                 "type": "SECTION",
-                "title": "SECTION",
+                "title": "SECTION_16",
                 "children": {
                     "Xle": "0.163",
                     "Yle": "0.0",
@@ -463,6 +463,6 @@
                     "Ainc": "0"
                 }
             }
-        ]
+        }
     }
 }

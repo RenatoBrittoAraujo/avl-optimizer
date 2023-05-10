@@ -66,8 +66,6 @@ def parse_avl_file(avl_file: str):
         rule = None
         if len(tokens) == 1:
             rule = keyword_rules.get(tokens[0])
-        if tokens[0] == "CONTROL":
-            pass
 
         if value.startswith('---'):
             if expecting_title:
@@ -81,7 +79,10 @@ def parse_avl_file(avl_file: str):
             if is_comment:
                 continue
             else:
-                value
+                old_title = curr["title"]
+                if curr["type"] != "root":
+                    queue[-2:][0]["children"][relationship_name][value] = curr
+                    del queue[-2:][0]["children"][relationship_name][old_title]
                 curr["title"] = value
                 expecting_title = False
                 continue
@@ -95,10 +96,17 @@ def parse_avl_file(avl_file: str):
             }
             queue.append(curr)
             relationship_name = rule["parent_relationship_name"]
+
             if parent["children"].get(relationship_name) is None:
-                parent["children"][relationship_name] = [curr]
-            else:
-                parent["children"][relationship_name].append(curr)
+                parent["children"][relationship_name] = {}
+
+            i = 0
+            while i == 0 or parent["children"][relationship_name].get(curr["title"]) is not None:
+                i += 1
+                curr["title"] = tokens[0] + "_" + str(i)
+
+            parent["children"][relationship_name][curr["title"]] = curr
+
             if rule.get("expect_title"):
                 expecting_title = True
             continue

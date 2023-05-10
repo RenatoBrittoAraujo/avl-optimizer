@@ -49,7 +49,7 @@ no máximo load do run case
 depois st, o nome do arquivo de saída
 aí ler o arquivo de saída, gerar uma pontuação, e repetir
 
-Reuniao 12/04/23
+### Reuniao 12/04/23
 
 =========== PASSOS DO PROGRAMA:
 
@@ -104,12 +104,52 @@ Como vc consegue o arqvuio? - fazendo na mao, com variaveis
 INVESTIGAR
 - O que é o comando dentro do AVL chamado RUN CASE?
 
+### Reuniao 26/04/23
+
+Os inputs são:
+| tag                                                               | range  | significado |
+| ----------------------------------------------------------------- | ------ | ----------- |
+| `children.surfaces.Right_Wing.children.YDUPLICATE`                | [0, 1] | ??          |
+| `children.surfaces.Right_Wing.children.ANGLE`                     | [0, n] | ??          |
+| `children.surfaces.Right_Wing.children.TRANSLATE.0`               | [0, n] | X ??        |
+| `children.surfaces.Right_Wing.children.TRANSLATE.1`               | [0, n] | Y ??        |
+| `children.surfaces.Right_Wing.children.TRANSLATE.2`               | [0, n] | Z ??        |
+| `children.surfaces.Right_Wing.children.sections.*.children.Xle`   | [0, n] | ??          |
+| `children.surfaces.Right_Wing.children.sections.*.children.Yle`   | [0, n] | ??          |
+| `children.surfaces.Right_Wing.children.sections.*.children.Zle`   | [0, n] | ??          |
+| `children.surfaces.Right_Wing.children.sections.*.children.Chord` | [0, n] | ??          |
+
+Os outputs são:
+| tag                  | significado | certeza |
+| -------------------- | ----------- |
+| `Cltot`              | ??          | true    |
+| `Cl'tot`             | ??          | true    |
+| `Cmtot`              | ??          | true    |
+| `Cntot`              | ??          | true    |
+| `Cn'tot`             | ??          | true    |
+| `Neutral point  Xnp` | ??          | true    |
+| `CLp`                | ??          | incerto |
+| `CLq`                | ??          | incerto |
+| `CLr`                | ??          | incerto |
+| `CYp`                | ??          | incerto |
+| `CYq`                | ??          | incerto |
+| `CYr`                | ??          | incerto |
+| `Clp`                | ??          | incerto |
+| `Clq`                | ??          | incerto |
+| `Clr`                | ??          | incerto |
+| `Cmp`                | ??          | incerto |
+| `Cmq`                | ??          | incerto |
+| `Cmr`                | ??          | incerto |
+| `Cnp`                | ??          | incerto |
+| `Cnq`                | ??          | incerto |
+| `Cnr`                | ??          | incerto |
+
+A envergadura consiste em encontrar o ponto mais longe do centro no eixo Y dentro das surfaces. O módulo dessa distância `*2` é igual a envergadura, porque o centro do avião está no centro de Y.
+
 ## TODO
 
-- Executa instancia do programa em terminal virtual
-- Envia algum comando pro terminal virtual
-- Lê algo do terminal virtual
-- Escrever parser geral do arquivo de entrada
+- Marcar todos os inputs baseado no json formado
+- SECTIONS fazem parte da SURFACE
 - Escrever parser geral do arquivo de saída
 
 ## DONE
@@ -118,3 +158,9 @@ INVESTIGAR
 - Achar executável AVL
 - Achar documentação AVL
 - Achar exemplos de entrada e saída AVL
+- Executa instancia do programa em terminal virtual
+- Envia algum comando pro terminal virtual
+
+## TODO (precisa mesmo?)
+
+- Lê algo do terminal virtual

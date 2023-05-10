@@ -1,6 +1,7 @@
 import subprocess
 from os.path import exists
 import copy
+import json
 
 from avl_parse_util import parse_avl_file
 
@@ -188,10 +189,11 @@ def test():
     # avl.analyse_v1()
     with open("geometria.txt") as f:
         x = AVLFileParser(arquivo=f.read())
-        base_lbl = "children.sections"
-        for i in range(len(list(x.get_value(base_lbl)))):
+        print(json.dumps(x.structure, indent=4))
+        base_lbl = "children.surfaces"
+        for i in list(x.get_value(base_lbl)):
             lbl = base_lbl + "." + str(i)
-            print(lbl, "=", x.get_value(lbl))
+            print(f"'{lbl}' = '{x.get_value(lbl)}'\n")
 
 
 def main():
@@ -204,6 +206,10 @@ def main():
         ],
         "cl"
     )
+
+    # otimizar ->
+    # - cn
+    # - 3 momentos
 
     fp = AVLFileParser(read_file("geometria.txt"))
 
