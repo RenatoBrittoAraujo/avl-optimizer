@@ -117,7 +117,7 @@ Os inputs são:
 | `children.surfaces.emp horizontal.children.sections.*.children.Xle`   | [0, n] | ??          |
 | `children.surfaces.emp horizontal.children.sections.*.children.Yle`   | [0, n] | ??          |
 | `children.surfaces.emp horizontal.children.sections.*.children.Zle`   | [0, n] | ??          |
-| `children.surfaces.emp horizontal.children.sections.*.children.Chord` | [0, n] | ??          |
+| `children.surfaces.emp horizontal.children.sections.*.children.Chord` | [0, n] | ??          |****
 
 SURFACES A SE ANALISAR:
 a idéia é ficar a asa e mexer só na empenagem

@@ -37,7 +37,6 @@
                     "sections": {
                         "SECTION_1": {
                             "type": "SECTION",
-                            "title": "SECTION_1",
                             "children": {
                                 "Xle": "0.00",
                                 "Yle": "0.0",
@@ -52,7 +51,6 @@
                         },
                         "SECTION_2": {
                             "type": "SECTION",
-                            "title": "SECTION_2",
                             "children": {
                                 "Xle": "0.00",
                                 "Yle": "0.2455",
@@ -67,7 +65,6 @@
                         },
                         "SECTION_3": {
                             "type": "SECTION",
-                            "title": "SECTION_3",
                             "children": {
                                 "Xle": "0.000",
                                 "Yle": "0.7365",
@@ -106,7 +103,6 @@
                     "sections": {
                         "SECTION_1": {
                             "type": "SECTION",
-                            "title": "SECTION_1",
                             "children": {
                                 "Xle": "0.254",
                                 "Yle": "0.0",
@@ -119,7 +115,6 @@
                                 "controls": {
                                     "CONTROL_1": {
                                         "type": "CONTROL",
-                                        "title": "CONTROL_1",
                                         "children": {
                                             "Cname": "flaperon",
                                             "Cgain": "1.0",
@@ -137,7 +132,6 @@
                         },
                         "SECTION_2": {
                             "type": "SECTION",
-                            "title": "SECTION_2",
                             "children": {
                                 "Xle": "0.254",
                                 "Yle": "0.2455",
@@ -150,7 +144,6 @@
                                 "controls": {
                                     "CONTROL_1": {
                                         "type": "CONTROL",
-                                        "title": "CONTROL_1",
                                         "children": {
                                             "Cname": "flaperon",
                                             "Cgain": "1.0",
@@ -168,7 +161,6 @@
                         },
                         "SECTION_3": {
                             "type": "SECTION",
-                            "title": "SECTION_3",
                             "children": {
                                 "Xle": "0.2140",
                                 "Yle": "0.7365",
@@ -181,7 +173,6 @@
                                 "controls": {
                                     "CONTROL_1": {
                                         "type": "CONTROL",
-                                        "title": "CONTROL_1",
                                         "children": {
                                             "Cname": "flaperon",
                                             "Cgain": "1.0",
@@ -223,7 +214,6 @@
                     "sections": {
                         "SECTION_1": {
                             "type": "SECTION",
-                            "title": "SECTION_1",
                             "children": {
                                 "Xle": "-0.05",
                                 "Yle": "0.0",
@@ -234,7 +224,6 @@
                                 "controls": {
                                     "CONTROL_1": {
                                         "type": "CONTROL",
-                                        "title": "CONTROL_1",
                                         "children": {
                                             "name": "elevator",
                                             "gain": "1.0",
@@ -252,7 +241,6 @@
                         },
                         "SECTION_2": {
                             "type": "SECTION",
-                            "title": "SECTION_2",
                             "children": {
                                 "Xle": "-0.05",
                                 "Yle": "0.2455",
@@ -263,7 +251,6 @@
                                 "controls": {
                                     "CONTROL_1": {
                                         "type": "CONTROL",
-                                        "title": "CONTROL_1",
                                         "children": {
                                             "name": "elevator",
                                             "gain": "1.0",
@@ -303,7 +290,6 @@
                     "sections": {
                         "SECTION_1": {
                             "type": "SECTION",
-                            "title": "SECTION_1",
                             "children": {
                                 "Xle": "0.09",
                                 "Yle": "0",
@@ -314,7 +300,6 @@
                                 "controls": {
                                     "CONTROL_1": {
                                         "type": "CONTROL",
-                                        "title": "CONTROL_1",
                                         "children": {
                                             "name": "rudder",
                                             "gain": "1.0",
@@ -331,7 +316,6 @@
                         },
                         "SECTION_2": {
                             "type": "SECTION",
-                            "title": "SECTION_2",
                             "children": {
                                 "Xle": "0",
                                 "Yle": "0",
@@ -342,7 +326,6 @@
                                 "controls": {
                                     "CONTROL_1": {
                                         "type": "CONTROL",
-                                        "title": "CONTROL_1",
                                         "children": {
                                             "name": "rudder",
                                             "gain": "1.0",
@@ -383,7 +366,6 @@
                     "sections": {
                         "SECTION_1": {
                             "type": "SECTION",
-                            "title": "SECTION_1",
                             "children": {
                                 "Xle": "0.0",
                                 "Yle": "0.0",
@@ -394,7 +376,6 @@
                         },
                         "SECTION_2": {
                             "type": "SECTION",
-                            "title": "SECTION_2",
                             "children": {
                                 "Xle": "0.0",
                                 "Yle": "0.026",
@@ -405,7 +386,6 @@
                         },
                         "SECTION_3": {
                             "type": "SECTION",
-                            "title": "SECTION_3",
                             "children": {
                                 "Xle": "0.163",
                                 "Yle": "0.055",
@@ -439,7 +419,6 @@
                     "sections": {
                         "SECTION_1": {
                             "type": "SECTION",
-                            "title": "SECTION_1",
                             "children": {
                                 "Xle": "0.0",
                                 "Yle": "0.0",
@@ -450,7 +429,6 @@
                         },
                         "SECTION_2": {
                             "type": "SECTION",
-                            "title": "SECTION_2",
                             "children": {
                                 "Xle": "0.0",
                                 "Yle": "0.0",
@@ -461,7 +439,6 @@
                         },
                         "SECTION_3": {
                             "type": "SECTION",
-                            "title": "SECTION_3",
                             "children": {
                                 "Xle": "0.163",
                                 "Yle": "0.0",

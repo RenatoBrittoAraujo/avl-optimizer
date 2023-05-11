@@ -118,6 +118,9 @@ def parse_avl_file(avl_file: str):
 
             if rule.get("expect_title"):
                 expecting_title = True
+            else:
+                del curr["title"]
+
             continue
 
         if not rule and len(expecting_value_labels) > 0 and not is_comment:
@@ -153,10 +156,141 @@ def parse_avl_file(avl_file: str):
     return structure
 
 
-if __name__ == "__main__":
-    with open('geometria.avl') as f:
+def build_avl_file(st: dict, depth: int = 0) -> str:
+    # procedure:
+    #   se tem titulo:
+    #     printa titulo
+    #   senao se tiver tipo e não é root:
+    #     printa tipo
+    #   para cada filho
+    #       se filho é dict:
+    #           procedure(filho)
+    #       senao:
+    #           printa nomes atributos
+    #           printa valores atributos
+
+    def tab():
+        return "\t" * depth
+
+    def end():
+        return '\n' + tab()
+
+    out = ""
+
+    if depth > 0:
+        out += "#---------------" + end()
+
+    if st.get("type") and st["type"] != "root":
+        out += st["type"] + end()
+
+    if st.get("title"):
+        out += st["title"] + end()
+
+    if st.get("children"):
+        for name, child in st["children"].items():
+            if type(child) == dict:
+                for sc in child.values():
+                    out += build_avl_file(sc, depth+1) + end()
+            else:
+                if keyword_rules.get(name):
+                    out += '#' + name + end()
+                else:
+                    out += '#' + name + end()
+                l = child
+                if type(child) != list:
+                    l = [child]
+                for i in l:
+                    out += f"{i} "
+                out += end()
+
+    return out
+
+
+def parse_avl_out_file(out_file: str):
+    tokens = ' \n '.join(out_file.split("\n"))
+    tokens = ' = '.join(tokens.split("="))
+    tokens = ' '.join(tokens.split("\t"))
+    tokens = ' '.join(tokens.split("#"))
+    tokens = tokens.split(" ")
+
+    c_tokens = []
+    for e in tokens:
+        if e == '\n':
+            c_tokens.append('\n')
+            continue
+        e = e.strip()
+        if len(e) == 0 or e.startswith("--"):
+            continue
+        c_tokens.append(e)
+
+    i = 0
+    final = {}
+    for t in c_tokens:
+        if t == '=':
+            j = i
+            l = []
+            while c_tokens[j-1] != '\n':
+                l += [c_tokens[j-1]]
+                j -= 1
+            l = reversed(l)
+            label = ' '.join(l)
+            if label == "Clb Cnr / Clr Cnb":
+                final[label] = c_tokens[i+1]
+            elif label == "Neutral point Xnp":
+                final[label] = c_tokens[i+1]
+            else:
+                final[c_tokens[i-1]] = c_tokens[i+1]
+        i += 1
+
+    return final
+
+
+def build_out_avl_file(st: dict) -> str:
+    template = ""
+    with open("template_out.txt") as f:
+        template = f.read()
+    for k, v in st.items():
+        print(k, v)
+        template = template.replace('{' + k + '}', v)
+    return template
+
+
+def to_structure():
+    with open('g2.avl') as f:
         structure = parse_avl_file(f.read())
         out = json.dumps(structure, indent=4)
-        f = open("t.json", "w")
+        f = open("t2.json", "w")
         f.write(out)
         f.close()
+
+
+def to_out_structure():
+    with open('o3.txt') as f:
+        st_out = parse_avl_out_file(f.read())
+        out = json.dumps(st_out, indent=4)
+        f = open("to3.json", "w")
+        f.write(out)
+        f.close()
+
+
+def to_out_file():
+    with open('to3.json') as f:
+        st_out = json.loads(f.read())
+        out = build_out_avl_file(st_out)
+        f = open("io3.json", "w")
+        f.write(out)
+        f.close()
+
+
+def to_avl():
+    with open('t2.json') as f:
+        st = json.loads(f.read())
+        avl_f = build_avl_file(st)
+        f2 = open("g2.avl", "w")
+        f2.write(avl_f)
+        f2.close()
+
+
+if __name__ == "__main__":
+    to_out_structure()
+    to_out_file()

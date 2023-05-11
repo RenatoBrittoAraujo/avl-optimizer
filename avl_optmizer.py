@@ -4,7 +4,7 @@ import copy
 import json
 import math
 
-from avl_parse_util import parse_avl_file
+from avl_parse_util import parse_avl_file, build_avl_file, parse_avl_out_file, build_out_avl_file
 
 CONFIG_FILE = "config.json"
 
@@ -52,6 +52,9 @@ class FileParser():
         else:
             raise Exception("error: no file or structure provided")
 
+    def set_template(self, fp: 'FileParser'):
+        self.structure = copy.deepcopy(fp.structure)
+
     def set_value(self, key: str, value: str):
         last_l = None
         last_d = None
@@ -59,16 +62,13 @@ class FileParser():
         for label in key.split("."):
             last_l = label
             last_d = d
-            d = d[label]
-        last_d[last_l] = value
+            d = self.__get(d, label)
+        self.__set(last_d, last_l, value)
 
     def get_value(self, key: str):
         d = self.structure
         for label in key.split("."):
-            if type(d) == list:
-                d = d[int(label)]
-            else:
-                d = d[label]
+            d = self.__get(d, label)
         return d
 
     def set_values(self, keys: list[str], values: list[str]):
@@ -84,10 +84,24 @@ class FileParser():
     def parse_from_file(self, arquivo: str):
         raise NotImplementedError
 
+    def __get(self, obj: any, key: str) -> any:
+        if type(obj) == list:
+            return obj[int(key)]
+        else:
+            return obj[key]
+
+    def __set(self, obj: any, key: str, val: any):
+        if type(obj) == list:
+            obj[int(key)] = val
+        else:
+            obj[key] = val
+
 
 class AVLFileParser(FileParser):
     def parse_into_file(self) -> str:
-        raise NotImplementedError
+        if self.structure is None:
+            raise EOFError
+        return build_avl_file(self.structure)
 
     def parse_from_file(self, arquivo: str):
         return parse_avl_file(arquivo)
@@ -95,16 +109,13 @@ class AVLFileParser(FileParser):
 
 class AVLResultParser(FileParser):
     def parse_into_file(self) -> str:
-        raise NotImplementedError
+        raise par
 
     def parse_from_file(self, arquivo: str) -> str:
         raise NotImplementedError
 
 
 # interact with program itself
-
-# interact with program itself
-
 
 class AVL():
     command_list: str
@@ -185,6 +196,7 @@ class Input:
         self.interval = value.get("interval")
         self.min_variation = value.get("min_variation")
         self.max_variation = value.get("max_variation")
+        self.curr = curr
 
         global INPUT_INDEX
         if 'INPUT_INDEX' not in globals():
@@ -200,7 +212,11 @@ class Input:
 
 
 class Output:
+
     key: str
+
+    def __init__(self, key: str):
+        self.key = key
 
 
 class Scorer:
@@ -317,7 +333,7 @@ class Evaluator:
 
 class EvaluatorAdapter():
 
-    res_memo: dict[list[float], AVLResultParser]
+    res_memo: dict[tuple[float], AVLResultParser]
 
     def __init__(
         self,
@@ -344,7 +360,7 @@ class EvaluatorAdapter():
         return self.get_avl_file_from_inputs(vals), self.get_results_from_avl(vals)
 
     def get_results_from_avl(self, x: list[float]) -> AVLResultParser:
-        if x in self.res_memo:
+        if tuple(x) in self.res_memo:
             return self.res_memo[x]
 
         in_fp = self.get_avl_file_from_inputs(x)
@@ -352,7 +368,7 @@ class EvaluatorAdapter():
         res = self.avl.analyse(file)
         out_fp = AVLResultParser(res)
 
-        self.res_memo[x] = out_fp
+        self.res_memo[tuple(x)] = out_fp
         return out_fp, in_fp
 
     def get_avl_file_from_inputs(self, x: list[float]) -> AVLFileParser:
@@ -388,7 +404,7 @@ def main():
         for k, v in cfg["inputs"].items()
     ]
 
-    outputs = [Output(key=k) for k, v in cfg["outputs"].values()]
+    outputs = [Output(key=k) for k, v in cfg["outputs"].items()]
 
     scorer = SumScorer()
 
@@ -415,5 +431,5 @@ def main():
 
 
 if __name__ == "__main__":
-    # main()
-    test()
+    main()
+    # test()

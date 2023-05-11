@@ -51,13 +51,6 @@
     "children.surfaces.emp_horizontal.children.sections.SECTION_2.children.Chord": {
       "interval": [0, 100.0]
     },
-    "children.surfaces.emp_vertical.children.YDUPLICATE": {
-      "interval": [0, 100.0],
-      "min_variation": 1
-    },
-    "children.surfaces.emp_vertical.children.ANGLE": {
-      "interval": [0, 100.0]
-    },
     "children.surfaces.emp_vertical.children.TRANSLATE.0": {
       "interval": [0, 100.0]
     },
