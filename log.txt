@@ -1,0 +1,237 @@
+
+ ===================================================
+  Athena Vortex Lattice  Program      Version  3.40
+  Copyright (C) 2002   Mark Drela, Harold Youngren
+
+  This software comes with ABSOLUTELY NO WARRANTY,
+    subject to the GNU General Public License.
+
+  Caveat computor
+ ===================================================
+
+ ==========================================================
+   Quit    Exit program
+
+  .OPER    Compute operating-point run cases
+  .MODE    Eigenvalue analysis of run cases
+  .TIME    Time-domain calculations
+
+   LOAD f  Read configuration input file
+   MASS f  Read mass distribution file
+   CASE f  Read run case file
+
+   CINI    Clear and initialize run cases
+   MSET i  Apply mass file data to stored run case(s)
+
+  .PLOP    Plotting options
+   NAME s  Specify new configuration name
+
+ AVL   c>  
+ AVL   c>  
+ Reading file: in.avl  ...
+
+ Configuration: WING_2022                                                   
+
+   Building surface: Right_Wing                              
+     Reading airfoil from file: w_NACA4412.dat
+     Reading airfoil from file: w_NACA4412.dat
+     Reading airfoil from file: w_NACA4412.dat
+  
+   Building duplicate image-surface: Right_Wing (YDUP)                       
+
+   Building surface: Right_flap                              
+     Reading airfoil from file: FLAPNOVO.dat
+     Reading airfoil from file: FLAPNOVO.dat
+     Reading airfoil from file: FLAPNOVO.dat
+  
+   Building duplicate image-surface: Right_flap (YDUP)                       
+
+   Building surface: emp_horizontal                          
+     Reading airfoil from file: eh_NACA3312_inv.dat
+     Reading airfoil from file: eh_NACA3312_inv.dat
+  
+   Building duplicate image-surface: emp_horizontal (YDUP)                   
+
+   Building surface: emp_vertical                            
+     Reading airfoil from file: ev_BELL540.dat
+     Reading airfoil from file: ev_BELL540.dat
+
+   Building surface: Fuselage H                              
+  
+   Building duplicate image-surface: Fuselage H (YDUP)                       
+
+   Building surface: Fuselage V                              
+
+ Mach =    0.0000  (default)
+
+    0 Bodies
+   10 Solid surfaces
+  147 Strips
+ 2456 Vortices
+
+    3 Control variables
+    0 Design parameters
+
+ Initializing run cases...
+
+ AVL   c>  
+ Operation of run case 1/1:   -unnamed-                              
+ ==========================================================
+
+  variable          constraint              
+  ------------      ------------------------
+  A lpha        ->  alpha       =   0.000         
+  B eta         ->  beta        =   0.000         
+  R oll  rate   ->  pb/2V       =   0.000         
+  P itch rate   ->  qc/2V       =   0.000         
+  Y aw   rate   ->  rb/2V       =   0.000         
+  D1  flaperon  ->  flaperon    =   0.000         
+  D2  elevator  ->  elevator    =   0.000         
+  D3  rudder    ->  rudder      =   0.000         
+  ------------      ------------------------
+
+  C1  set level or banked  horizontal flight constraints
+  C2  set steady pitch rate (looping) flight constraints
+  M odify parameters                                    
+
+ "#" select  run case          L ist defined run cases   
+  +  add new run case          S ave run cases to file   
+  -  delete  run case          F etch run cases from file
+  N ame current run case       W rite forces to file     
+
+ eX ecute run case             I nitialize variables     
+
+  G eometry plot               T refftz Plane plot       
+
+  ST  stability derivatives    FT  total   forces        
+  SB  body-axis derivatives    FN  surface forces        
+  RE  reference quantities     FS  strip   forces        
+  DE  design changes           FE  element forces        
+  O ptions                     FB  body forces           
+                               HM  hinge moments         
+                               VM  strip shear,moment    
+  MRF  machine-readable format CPOM OML surface pressures
+
+ .OPER (case 1/1)   c>    Building normalwash AIC matrix...
+  Factoring normalwash AIC matrix...
+  Building source+doublet strength AIC matrix...
+  Building source+doublet velocity AIC matrix...
+  Building bound-vortex velocity matrix...
+
+ iter d(alpha)   d(beta)    d(pb/2V)   d(qc/2V)   d(rb/2V)   flaperon   elevator   rudder     
+   1 -0.000E+00 -0.000E+00  0.000E+00 -0.000E+00  0.000E+00 -0.000E+00 -0.000E+00 -0.000E+00
+ ---------------------------------------------------------------
+ Vortex Lattice Output -- Total Forces
+
+ Configuration: WING_2022                                                   
+     # Surfaces =  10
+     # Strips   = 147
+     # Vortices =2456
+
+  Sref = 0.39034       Cref = 0.28100       Bref =  1.4730    
+  Xref =  0.0000       Yref =  0.0000       Zref =-0.70000E-01
+
+ Standard axis orientation,  X fwd, Z down         
+
+ Run case:  -unnamed-                              
+
+  Alpha =   0.00000     pb/2V =  -0.00000     p'b/2V =  -0.00000
+  Beta  =   0.00000     qc/2V =   0.00000
+  Mach  =     0.000     rb/2V =  -0.00000     r'b/2V =  -0.00000
+
+  CXtot =  -0.01979     Cltot =  -0.00000     Cl'tot =  -0.00000
+  CYtot =   0.00000     Cmtot =   0.19341
+  CZtot =  -0.47811     Cntot =  -0.00000     Cn'tot =  -0.00000
+
+  CLtot =   0.47811
+  CDtot =   0.01979
+  CDvis =   0.00000     CDind = 0.0197947
+  CLff  =   0.47797     CDff  = 0.0221800    | Trefftz
+  CYff  =   0.00000         e =    0.5898    | Plane  
+
+   flaperon        =   0.00000
+   elevator        =   0.00000
+   rudder          =   0.00000
+
+ ---------------------------------------------------------------
+
+ Operation of run case 1/1:   -unnamed-                              
+ ==========================================================
+
+  variable          constraint              
+  ------------      ------------------------
+  A lpha        ->  alpha       =   0.000         
+  B eta         ->  beta        =   0.000         
+  R oll  rate   ->  pb/2V       =   0.000         
+  P itch rate   ->  qc/2V       =   0.000         
+  Y aw   rate   ->  rb/2V       =   0.000         
+  D1  flaperon  ->  flaperon    =   0.000         
+  D2  elevator  ->  elevator    =   0.000         
+  D3  rudder    ->  rudder      =   0.000         
+  ------------      ------------------------
+
+  C1  set level or banked  horizontal flight constraints
+  C2  set steady pitch rate (looping) flight constraints
+  M odify parameters                                    
+
+ "#" select  run case          L ist defined run cases   
+  +  add new run case          S ave run cases to file   
+  -  delete  run case          F etch run cases from file
+  N ame current run case       W rite forces to file     
+
+ eX ecute run case             I nitialize variables     
+
+  G eometry plot               T refftz Plane plot       
+
+  ST  stability derivatives    FT  total   forces        
+  SB  body-axis derivatives    FN  surface forces        
+  RE  reference quantities     FS  strip   forces        
+  DE  design changes           FE  element forces        
+  O ptions                     FB  body forces           
+                               HM  hinge moments         
+                               VM  strip shear,moment    
+  MRF  machine-readable format CPOM OML surface pressures
+
+ .OPER (case 1/1)   c>  
+Enter filename, or <return> for screen output   s>  
+ File exists.  Append/Overwrite/Cancel  (A/O/C)?  C
+ * Data not written
+
+ Operation of run case 1/1:   -unnamed-                              
+ ==========================================================
+
+  variable          constraint              
+  ------------      ------------------------
+  A lpha        ->  alpha       =   0.000         
+  B eta         ->  beta        =   0.000         
+  R oll  rate   ->  pb/2V       =   0.000         
+  P itch rate   ->  qc/2V       =   0.000         
+  Y aw   rate   ->  rb/2V       =   0.000         
+  D1  flaperon  ->  flaperon    =   0.000         
+  D2  elevator  ->  elevator    =   0.000         
+  D3  rudder    ->  rudder      =   0.000         
+  ------------      ------------------------
+
+  C1  set level or banked  horizontal flight constraints
+  C2  set steady pitch rate (looping) flight constraints
+  M odify parameters                                    
+
+ "#" select  run case          L ist defined run cases   
+  +  add new run case          S ave run cases to file   
+  -  delete  run case          F etch run cases from file
+  N ame current run case       W rite forces to file     
+
+ eX ecute run case             I nitialize variables     
+
+  G eometry plot               T refftz Plane plot       
+
+  ST  stability derivatives    FT  total   forces        
+  SB  body-axis derivatives    FN  surface forces        
+  RE  reference quantities     FS  strip   forces        
+  DE  design changes           FE  element forces        
+  O ptions                     FB  body forces           
+                               HM  hinge moments         
+                               VM  strip shear,moment    
+  MRF  machine-readable format CPOM OML surface pressures
+
+ .OPER (case 1/1)   c>  <__main__.AVLResultParser object at 0x7f0a44c46e60>

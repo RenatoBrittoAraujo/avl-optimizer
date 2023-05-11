@@ -1,4 +1,5 @@
 import json
+import copy
 
 
 def gettokens(s):
@@ -170,7 +171,8 @@ def build_avl_file(st: dict, depth: int = 0) -> str:
     #           printa valores atributos
 
     def tab():
-        return "\t" * depth
+        return ''
+        # return "\t" * depth
 
     def end():
         return '\n' + tab()
@@ -187,15 +189,34 @@ def build_avl_file(st: dict, depth: int = 0) -> str:
         out += st["title"] + end()
 
     if st.get("children"):
-        for name, child in st["children"].items():
+        # print default attributes for section
+        default_attributes = keyword_rules[st["type"]].get("attribute_groups")
+        all_attributes = copy.deepcopy(st["children"])
+
+        for attr_grp in default_attributes:
+            attrs = []
+            attr_names = []
+            for attr_name in attr_grp:
+                val = st["children"].get(attr_name)
+                if val is None:
+                    continue
+                attr_names.append(attr_name)
+                if type(val) == list:
+                    val = ' '.join(val)
+                attrs.append(val)
+            out += '#' + ' '.join(attr_names) + end()
+            out += ' '.join(attrs) + end()
+            for attr_name in attr_grp:
+                if all_attributes.get(attr_name):
+                    del all_attributes[attr_name]
+
+        # print all remaining attributes
+        for name, child in all_attributes.items():
             if type(child) == dict:
                 for sc in child.values():
                     out += build_avl_file(sc, depth+1) + end()
             else:
-                if keyword_rules.get(name):
-                    out += '#' + name + end()
-                else:
-                    out += '#' + name + end()
+                out += name + end()
                 l = child
                 if type(child) != list:
                     l = [child]
@@ -250,7 +271,6 @@ def build_out_avl_file(st: dict) -> str:
     with open("template_out.txt") as f:
         template = f.read()
     for k, v in st.items():
-        print(k, v)
         template = template.replace('{' + k + '}', v)
     return template
 
@@ -265,7 +285,7 @@ def to_structure():
 
 
 def to_out_structure():
-    with open('o3.txt') as f:
+    with open('t2.json') as f:
         st_out = parse_avl_out_file(f.read())
         out = json.dumps(st_out, indent=4)
         f = open("to3.json", "w")
@@ -292,5 +312,7 @@ def to_avl():
 
 
 if __name__ == "__main__":
-    to_out_structure()
-    to_out_file()
+    # to_out_structure()
+    to_avl()
+    # to_out_structure()
+    # to_out_file()

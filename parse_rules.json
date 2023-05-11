@@ -25,7 +25,8 @@
     "expects": 1,
     "is_root": true,
     "root_parent": "SECTION",
-    "parent_relationship_name": "controls"
+    "parent_relationship_name": "controls",
+    "attribute_groups": [["name", "gain", "Cname", "Cgain", "Xhinge", "HingeVec", "XYZhvec", "SgnDup"]]
   },
   "Cgain": {
     "expects": 1
@@ -79,14 +80,16 @@
     "expects": 1,
     "is_root": true,
     "root_parent": "SURFACE",
-    "parent_relationship_name": "sections"
+    "parent_relationship_name": "sections",
+    "attribute_groups": [["Xle", "Yle", "Zle", "Chord", "Ainc", "Nspanwise", "Sspace"]]
   },
   "SURFACE": {
     "expects": 1,
     "expect_title": true,
     "is_root": true,
     "root_parent": "root",
-    "parent_relationship_name": "surfaces"
+    "parent_relationship_name": "surfaces",
+    "attribute_groups": [["Nchordwise", "Cspace", "Nspanwise", "Sspace"]]
   },
   "SgnDup": {
     "expects": 1
@@ -156,5 +159,16 @@
   },
   "rudder": {
     "expects": 1
+  },
+  "root": {
+    "expects": 1,
+    "expect_title": true,
+    "attribute_groups": [
+      ["Mach"],
+      ["IYsym", "IZsym", "Zsym"],
+      ["Sref", "Cref", "Bref"],
+      ["Xref", "Yref", "Zref"],
+      ["CDp"]
+    ]
   }
 }

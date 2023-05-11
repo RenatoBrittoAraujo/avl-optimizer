@@ -38,7 +38,10 @@ def read_json(file):
 
 
 def delete_file(target):
-    subprocess.call("rm " + target)
+    try:
+        subprocess.call("rm " + target)
+    except Exception:
+        pass
 
 
 class FileParser():
@@ -109,10 +112,10 @@ class AVLFileParser(FileParser):
 
 class AVLResultParser(FileParser):
     def parse_into_file(self) -> str:
-        raise par
+        return build_out_avl_file(self.structure)
 
     def parse_from_file(self, arquivo: str) -> str:
-        raise NotImplementedError
+        return parse_avl_out_file(arquivo)
 
 
 # interact with program itself
@@ -145,7 +148,8 @@ class AVL():
             if self.overwrite_any:
                 delete_file(out)
             else:
-                raise Exception("error: file '" + out + "' is not .avl")
+                raise Exception("error: file '" + out +
+                                "' is not overwritable")
 
         if not exists(inp):
             raise Exception("error: avl input file " + inp + " does not exist")
@@ -177,7 +181,11 @@ class AVL():
         inp = self.avl_folder_path + self.input_file
         out = self.avl_folder_path + self.output_file
         write_file(inp, in_fp.parse_into_file())
-        self.analyse_v1()
+        try:
+            self.analyse_v1()
+        except:
+            # o programa sempre fecha com erro de EOF, ainda não consertardo
+            pass
         res_str = read_file(out)
         res_fp = AVLResultParser(res_str)
         return res_fp
@@ -360,16 +368,15 @@ class EvaluatorAdapter():
         return self.get_avl_file_from_inputs(vals), self.get_results_from_avl(vals)
 
     def get_results_from_avl(self, x: list[float]) -> AVLResultParser:
-        if tuple(x) in self.res_memo:
-            return self.res_memo[x]
-
         in_fp = self.get_avl_file_from_inputs(x)
-        file = in_fp.parse_into_file()
-        res = self.avl.analyse(file)
-        out_fp = AVLResultParser(res)
+        if tuple(x) in self.res_memo:
+            return self.res_memo[x], in_fp, self.inputs, self.outputs
+
+        # res = self.avl.analyse(in_fp)
+        out_fp = AVLResultParser(read_file("env/out.txt"))
 
         self.res_memo[tuple(x)] = out_fp
-        return out_fp, in_fp
+        return out_fp, in_fp, self.inputs, self.outputs
 
     def get_avl_file_from_inputs(self, x: list[float]) -> AVLFileParser:
         new_fp = AVLFileParser(str)
@@ -397,7 +404,7 @@ def main():
     input_fp = AVLFileParser(arquivo=read_file(cfg["base_input_file"]))
 
     avl = AVL(cfg["avl_env_path"], cfg["avl_input_file"],
-              cfg["avl_output_file"])
+              cfg["avl_output_file"], overwrite_any=True)
 
     inputs = [
         Input(key=k, value=v, curr=input_fp.get_value(k))
