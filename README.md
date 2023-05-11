@@ -107,17 +107,17 @@ INVESTIGAR
 ### Reuniao 26/04/23
 
 Os inputs são:
-| tag                                                               | range  | significado |
-| ----------------------------------------------------------------- | ------ | ----------- |
-| `children.surfaces.Right_Wing.children.YDUPLICATE`                | [0, 1] | ??          |
-| `children.surfaces.Right_Wing.children.ANGLE`                     | [0, n] | ??          |
-| `children.surfaces.Right_Wing.children.TRANSLATE.0`               | [0, n] | X ??        |
-| `children.surfaces.Right_Wing.children.TRANSLATE.1`               | [0, n] | Y ??        |
-| `children.surfaces.Right_Wing.children.TRANSLATE.2`               | [0, n] | Z ??        |
-| `children.surfaces.Right_Wing.children.sections.*.children.Xle`   | [0, n] | ??          |
-| `children.surfaces.Right_Wing.children.sections.*.children.Yle`   | [0, n] | ??          |
-| `children.surfaces.Right_Wing.children.sections.*.children.Zle`   | [0, n] | ??          |
-| `children.surfaces.Right_Wing.children.sections.*.children.Chord` | [0, n] | ??          |
+| tag                                                                   | range  | significado |
+| --------------------------------------------------------------------- | ------ | ----------- |
+| `children.surfaces.emp horizontal.children.YDUPLICATE`                | [0, 1] | ??          |
+| `children.surfaces.emp horizontal.children.ANGLE`                     | [0, n] | ??          |
+| `children.surfaces.emp horizontal.children.TRANSLATE.0`               | [0, n] | X ??        |
+| `children.surfaces.emp horizontal.children.TRANSLATE.1`               | [0, n] | Y ??        |
+| `children.surfaces.emp horizontal.children.TRANSLATE.2`               | [0, n] | Z ??        |
+| `children.surfaces.emp horizontal.children.sections.*.children.Xle`   | [0, n] | ??          |
+| `children.surfaces.emp horizontal.children.sections.*.children.Yle`   | [0, n] | ??          |
+| `children.surfaces.emp horizontal.children.sections.*.children.Zle`   | [0, n] | ??          |
+| `children.surfaces.emp horizontal.children.sections.*.children.Chord` | [0, n] | ??          |
 
 SURFACES A SE ANALISAR:
 a idéia é ficar a asa e mexer só na empenagem
@@ -129,6 +129,7 @@ saqueei, então ignorar as "wings" só focar nas outras superfícies
 emp vertical e horizontal no arquivo
 isso, e os flaps também
 
+PORTANTO: **emp horizontal**, **emp vertical** e **flap right**.
 
 Os outputs são:
 | tag                  | significado | certeza |

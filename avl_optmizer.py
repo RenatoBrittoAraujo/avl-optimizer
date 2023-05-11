@@ -2,17 +2,11 @@ import subprocess
 from os.path import exists
 import copy
 import json
+import math
 
 from avl_parse_util import parse_avl_file
 
-# em teoria, isso não deveria ser mudado. se vc precisa
-# mudar isso, é porque não tá usando os parametros do programa
-AVL_ENV_PATH = "env/"
-AVL_INPUT_FILE = "t1.avl"
-AVL_OUTPUT_FILE = "out.txt"
-AVL_INPUT_KEYWORDS = [
-    "SECTION", "SURFACE", "AFILE", "CLAF", "COMPONENT", "TRANSLATE", "ANGLE", "SCALE", "YDUPLICATE", "CONTROL", "NOWAKE"
-]
+CONFIG_FILE = "config.json"
 
 
 def to_float(v: str) -> tuple[bool, float]:
@@ -34,67 +28,13 @@ def read_file(target):
     return txt
 
 
+def read_json(file):
+    with open(file, "r") as f:
+        return json.load(f)
+
+
 def delete_file(target):
     subprocess.call("rm " + target)
-
-# interact with program itself
-
-
-class AVL():
-    command_list: str
-    avl_folder_path: str
-    input_file: str
-    output_file: str
-    overwrite_any: bool
-
-    def __init__(self, avl_folder_path: str, output_file: str, input_file: str, overwrite_any: bool = False):
-        if not avl_folder_path.endswith("/"):
-            avl_folder_path += "/"
-        if not input_file.endswith(".avl"):
-            raise Exception("error: file '" +
-                            input_file + "' is not .avl")
-
-        self.avl_folder_path = avl_folder_path
-        self.input_file = input_file
-        self.output_file = output_file
-        self.command_list = ""
-        self.overwrite_any = overwrite_any
-
-    def exec(self):
-        inp = self.avl_folder_path + self.input_file
-        out = self.avl_folder_path + self.output_file
-
-        if exists(out):
-            if self.overwrite_any:
-                delete_file(out)
-            else:
-                raise Exception("error: file '" + out + "' is not .avl")
-
-        if not exists(inp):
-            raise Exception("error: avl input file " + inp + " does not exist")
-
-        if not self.command_list:
-            raise Exception("error: no avl commands have been provided")
-
-        return subprocess.run(
-            "./avl", cwd="env", input=bytes(self.command_list, encoding="utf-8"))
-
-    def add_command(self, cmd: str):
-        self.command_list += cmd + '\n'
-
-    def analyse_v1(self) -> str:
-        commands = """
-        LOAD {input_file}
-        OPER
-        X
-        ST
-        {output_file}
-        """.format(input_file=self.input_file, output_file=self.output_file)
-
-        for line in commands.split('\n'):
-            self.add_command(line)
-
-        return self.exec()
 
 
 class FileParser():
@@ -157,36 +97,267 @@ class AVLResultParser(FileParser):
         raise NotImplementedError
 
 
-class Evaluator():
-    optmize_target = "cl"
-    optmizing_parameters = ["corda", "envergadura"]
-    last = []
-    v = []
+# interact with program itself
 
-    def __init__(self, optmizing_parameters, optimize_target):
-        self.optmizing_parameters = optmizing_parameters
-        self.optmize_target = optimize_target
+# interact with program itself
 
-    def set_results(self, fp: AVLResultParser):
-        nv = []
-        for param in self.optmizing_parameters:
-            nv.append(fp.get_value(param))
-        self.v.append(nv)
 
-    def is_max(self, err=1e-6) -> bool:
-        pass
+class AVL():
+    command_list: str
+    avl_folder_path: str
+    input_file: str
+    output_file: str
+    overwrite_any: bool
 
-    def get_next_params(self) -> list[any]:
-        # calculate highest value since last
-        # set last as new target
-        # calculate best diffs to investigate around new target
-        # return each diff
-        pass
+    def __init__(self, avl_folder_path: str, output_file: str, input_file: str, overwrite_any: bool = False):
+        if not avl_folder_path.endswith("/"):
+            avl_folder_path += "/"
+        if not input_file.endswith(".avl"):
+            raise Exception("error: file '" +
+                            input_file + "' is not .avl")
+
+        self.avl_folder_path = avl_folder_path
+        self.input_file = input_file
+        self.output_file = output_file
+        self.command_list = ""
+        self.overwrite_any = overwrite_any
+
+    def exec(self):
+        inp = self.avl_folder_path + self.input_file
+        out = self.avl_folder_path + self.output_file
+
+        if exists(out):
+            if self.overwrite_any:
+                delete_file(out)
+            else:
+                raise Exception("error: file '" + out + "' is not .avl")
+
+        if not exists(inp):
+            raise Exception("error: avl input file " + inp + " does not exist")
+
+        if not self.command_list:
+            raise Exception("error: no avl commands have been provided")
+
+        return subprocess.run(
+            "./avl", cwd="env", input=bytes(self.command_list, encoding="utf-8"))
+
+    def add_command(self, cmd: str):
+        self.command_list += cmd + '\n'
+
+    def analyse_v1(self) -> str:
+        commands = """
+        LOAD {input_file}
+        OPER
+        X
+        ST
+        {output_file}
+        """.format(input_file=self.input_file, output_file=self.output_file)
+
+        for line in commands.split('\n'):
+            self.add_command(line)
+
+        return self.exec()
+
+    def analyse(self, in_fp: AVLFileParser) -> AVLResultParser:
+        inp = self.avl_folder_path + self.input_file
+        out = self.avl_folder_path + self.output_file
+        write_file(inp, in_fp.parse_into_file())
+        self.analyse_v1()
+        res_str = read_file(out)
+        res_fp = AVLResultParser(res_str)
+        return res_fp
+
+
+class Input:
+    key: str
+    index: int
+    interval: list[float]
+    min_variation: float
+    max_variation: float
+    curr: float
+
+    def __init__(self, key: str, curr: float, value: dict):
+        self.key = key
+        self.interval = value.get("interval")
+        self.min_variation = value.get("min_variation")
+        self.max_variation = value.get("max_variation")
+
+        global INPUT_INDEX
+        if INPUT_INDEX is None:
+            INPUT_INDEX = 0
+        self.index = INPUT_INDEX
+        INPUT_INDEX += 1
+
+    def get_interval(self) -> tuple[float, float]:
+        return max(*self.interval), min(self.interval)
+
+    def get_interval_amplitude(self) -> float:
+        return max(*self.interval) - min(self.interval)
+
+
+class Output:
+    key: str
+
+
+class Scorer:
+
+    ev_adatper: 'EvaluatorAdapter'
+
+    def set_ev_adapter(self, ev_adapter: 'EvaluatorAdapter'):
+        self.ev_adatper = ev_adapter
+
+    def find_best_param(self, vals: list[dict[str["d", "v"], float]]) -> float:
+        raise NotImplementedError
+
+    def get_score_from_outfile(self, fp: AVLResultParser) -> float:
+        raise NotImplementedError
+
+
+class SumScorer(Scorer):
+
+    def find_best_param(self, vals: list[dict[str["d", "v"], float]]) -> float:
+        ans = vals[0]["v"]
+        param = vals[0]["d"]
+
+        for val in vals[1:]:
+            if val["v"] > ans:
+                ans = val["v"]
+                param = val["d"]
+        return param
+
+    def get_score_from_outfile(self, x: list[float]) -> float:
+        out_fp, in_fp, inputs, outputs = \
+            self.ev_adatper.get_results_from_avl(x)
+
+        vals_sum = 0
+        for key in outputs:
+            val = float(out_fp.get_value(key))
+            vals_sum += val
+        return vals_sum
+
+
+class Evaluator:
+    max_iter_count: int
+    limit_iter_count: int
+    limit_variation_factor: float
+    interval_steps: int
+    score_precision: float
+    scorer: Scorer
+
+    def __init__(
+            self,
+            max_iter_count: int,
+            limit_iter_count: int,
+            limit_variation_factor: float,
+            interval_steps: int,
+            score_precision: float,
+            scorer: Scorer
+    ):
+        self.max_iter_count = max_iter_count
+        self.limit_iter_count = limit_iter_count
+        self.limit_variation_factor = limit_variation_factor
+        self.interval_steps = interval_steps
+        self.score_precision = score_precision
+        self.scorer = scorer
+
+    def evaluate_derivative(self, inputs: list[Input]) -> list[float]:
+        iter_count = 0
+
+        step_sizes = []
+        for inp in inputs:
+            if inp.min_variation:
+                step_sizes.append(inp.min_variation)
+            else:
+                step_sizes.append(
+                    inp.get_interval_amplitude()/self.interval_steps
+                )
+
+        min_variation = step_sizes.copy()
+
+        x_next = [inp.curr for inp in inputs]
+
+        while True:
+            iter_count += 1
+            x_changed = False
+
+            for inp in inputs:
+                i = inputs.index(inp)
+
+                # increase so that a convergance is eventually forced
+                if iter_count > self.limit_iter_count:
+                    step_sizes[i] = step_sizes[i] * self.limit_variation_factor
+
+                fx = self.scorer.get_score_from_outfile(x_next)
+                variation = step_sizes[i]
+
+                # d = f(x) / (x1 - x2)
+                d = fx / -variation
+
+                if math.fabs(d*step_sizes[i]) < min_variation[i]:
+                    continue
+                elif d > 0:
+                    x_next[i] = x_next[i] + step_sizes[i]*d
+                else:
+                    x_next[i] = x_next[i] - step_sizes[i]*d
+                x_changed = False
+
+            if not x_changed:
+                break
+
+        return x_next
+
+
+class EvaluatorAdapter():
+
+    res_memo: map[list[float], AVLResultParser]
+
+    def __init__(
+        self,
+        avl: AVL,
+        input_file: AVLFileParser,
+        inputs: list[Input],
+        outputs: list[Output],
+        evaluator: Evaluator,
+        scorer: Scorer
+    ):
+        self.avl = avl
+        self.input_file = input_file
+        self.inputs = inputs
+        self.outputs = outputs
+        self.evaluator = evaluator
+        self.in_fp_base = input_file
+        self.scorer = scorer
+        self.res_memo = set()
+
+        scorer.set_ev_adapter(self)
+
+    def optimize(self) -> tuple[AVLFileParser, AVLResultParser]:
+        vals = self.evaluator.evaluate_derivative(self.inputs)
+        return self.get_avl_file_from_inputs(vals), self.get_results_from_avl(vals)
+
+    def get_results_from_avl(self, x: list[float]) -> AVLResultParser:
+        if x in self.res_memo:
+            return self.res_memo[x]
+
+        in_fp = self.get_avl_file_from_inputs(x)
+        file = in_fp.parse_into_file()
+        res = self.avl.analyse(file)
+        out_fp = AVLResultParser(res)
+
+        self.res_memo[x] = out_fp
+        return out_fp, in_fp
+
+    def get_avl_file_from_inputs(self, x: list[float]) -> AVLFileParser:
+        new_fp = AVLFileParser(str)
+        new_fp.set_template(self.in_fp_base)
+
+        for i in range(len(self.inputs)):
+            new_fp.set_value(self.inputs[i].key, x[i])
+
+        return new_fp
 
 
 def test():
-    # avl = AVL(AVL_ENV_PATH, AVL_OUTPUT_FILE,  AVL_INPUT_FILE)
-    # avl.analyse_v1()
     with open("geometria.txt") as f:
         x = AVLFileParser(arquivo=f.read())
         print(json.dumps(x.structure, indent=4))
@@ -197,68 +368,41 @@ def test():
 
 
 def main():
-    avl = AVL(AVL_ENV_PATH, AVL_OUTPUT_FILE,  AVL_INPUT_FILE)
+    cfg = read_file(CONFIG_FILE)
+
+    input_fp = AVLFileParser(read_file(cfg["base_input_file"]))
+
+    avl = AVL(cfg["avl_env_path"], cfg["avl_input_file"],
+              cfg["avl_output_file"])
+
+    inputs = [
+        Input(key=k, value=v, curr=input_fp.get_value(k))
+        for k, v in cfg["inputs"].values()
+    ]
+
+    outputs = [Output(key=k) for k, v in cfg["outputs"].values()]
+
+    scorer = SumScorer()
 
     evaluator = Evaluator(
-        [
-            "corda",
-            "envergadura"
-        ],
-        "cl"
+        max_iter_count=cfg["max_iter_count"],
+        limit_iter_count=cfg["limit_iter_count"],
+        limit_variation_factor=cfg["limit_variation_factor"],
+        interval_steps=cfg["interval_steps"],
+        score_precision=cfg["score_precision"],
+        scorer=scorer
     )
+
+    evaluator_adapter = EvaluatorAdapter(
+        avl, input_fp, inputs, outputs, evaluator, scorer)
 
     # otimizar ->
     # - cn
     # - 3 momentos
+    out_avl_fp, out_analysis_fp = evaluator_adapter.optimize()
 
-    fp = AVLFileParser(read_file("geometria.txt"))
-
-    # use multidimentional set thing to avoid going similar values?
-    queue = set()
-    queue.add(
-        [
-            fp.get_values(evaluator.optmizing_parameters)
-        ]
-    )
-
-    iter_count = 0
-    MAX_ITER_COUNT = 1e3
-
-    tgt = None
-
-    while True:
-        iter_count += 1
-        if iter_count > MAX_ITER_COUNT:
-            break
-
-        params = queue.pop()
-
-        new_fp = AVLFileParser(str)
-        new_fp.set_template(fp)
-
-        for param in params:
-            new_fp.set_value(param[0], param[1])
-        file = new_fp.parse_into_file()
-
-        res = avl.analyse(file)
-        rp = AVLResultParser(res)
-
-        evaluator.set_results(rp)
-
-        if evaluator.is_max(1e-6):
-            tgt = fp
-            break
-        else:
-            nextp = evaluator.get_next_params()
-            for param in nextp:
-                queue.add(param)
-
-    if tgt is not None:
-        f = fp.parse_into_file()
-        write_file("geometria_otima.txt", f)
-        print("success, optimal configuration in \"geometria_otima.txt\"")
-    else:
-        print("error: failed to find optimal configuration")
+    write_file(cfg["final_input_file"], out_avl_fp.parse_into_file())
+    write_file(cfg["final_output_file"], out_analysis_fp.parse_into_file())
 
 
 if __name__ == "__main__":
