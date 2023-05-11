@@ -57,6 +57,7 @@ def parse_avl_file(avl_file: str):
     expecting_value_labels = []
     curr = structure
     queue = [structure]
+    q_ptr = 0
 
     for token_obj in tokens_dict:
         tokens = token_obj["tokens"]
@@ -71,8 +72,6 @@ def parse_avl_file(avl_file: str):
             if expecting_title:
                 raise Exception(
                     "error: expected title, none provided. line: " + str(i))
-            queue = queue[:1]
-            curr = queue[0]
             continue
 
         if expecting_title:
@@ -81,20 +80,30 @@ def parse_avl_file(avl_file: str):
             else:
                 old_title = curr["title"]
                 if curr["type"] != "root":
-                    queue[-2:][0]["children"][relationship_name][value] = curr
-                    del queue[-2:][0]["children"][relationship_name][old_title]
+                    children_node = queue[q_ptr -
+                                          1]["children"][relationship_name]
+
+                    children_node[value] = curr
+                    del children_node[old_title]
+
+                    queue[q_ptr -
+                          1]["children"][relationship_name] = children_node
                 curr["title"] = value
                 expecting_title = False
                 continue
 
         if len(tokens) == 1 and rule and rule.get("is_root"):
-            parent = curr
+            while queue[q_ptr]["type"] != rule["root_parent"]:
+                q_ptr -= 1
+                queue.pop()
+            parent = queue[-1:][0]
             curr = {
                 "type": tokens[0],
                 "title": tokens[0],
                 "children": {}
             }
             queue.append(curr)
+            q_ptr += 1
             relationship_name = rule["parent_relationship_name"]
 
             if parent["children"].get(relationship_name) is None:
@@ -145,9 +154,9 @@ def parse_avl_file(avl_file: str):
 
 
 if __name__ == "__main__":
-    with open('geometria.txt') as f:
+    with open('geometria.avl') as f:
         structure = parse_avl_file(f.read())
         out = json.dumps(structure, indent=4)
-        f = open("out.json", "w")
+        f = open("t.json", "w")
         f.write(out)
         f.close()

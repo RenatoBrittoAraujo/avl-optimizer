@@ -21,6 +21,10 @@ def write_file(target, content):
         f.write(content)
 
 
+def copy_file(source, target):
+    subprocess.call("cp " + source + " " + target)
+
+
 def read_file(target):
     txt = ""
     with open(target) as f:
@@ -109,7 +113,7 @@ class AVL():
     output_file: str
     overwrite_any: bool
 
-    def __init__(self, avl_folder_path: str, output_file: str, input_file: str, overwrite_any: bool = False):
+    def __init__(self, avl_folder_path: str, input_file: str, output_file: str, overwrite_any: bool = False):
         if not avl_folder_path.endswith("/"):
             avl_folder_path += "/"
         if not input_file.endswith(".avl"):
@@ -183,7 +187,7 @@ class Input:
         self.max_variation = value.get("max_variation")
 
         global INPUT_INDEX
-        if INPUT_INDEX is None:
+        if 'INPUT_INDEX' not in globals():
             INPUT_INDEX = 0
         self.index = INPUT_INDEX
         INPUT_INDEX += 1
@@ -206,7 +210,7 @@ class Scorer:
     def set_ev_adapter(self, ev_adapter: 'EvaluatorAdapter'):
         self.ev_adatper = ev_adapter
 
-    def find_best_param(self, vals: list[dict[str["d", "v"], float]]) -> float:
+    def find_best_param(self, vals: list[dict[str, float]]) -> float:
         raise NotImplementedError
 
     def get_score_from_outfile(self, fp: AVLResultParser) -> float:
@@ -215,7 +219,7 @@ class Scorer:
 
 class SumScorer(Scorer):
 
-    def find_best_param(self, vals: list[dict[str["d", "v"], float]]) -> float:
+    def find_best_param(self, vals: list[dict[str, float]]) -> float:
         ans = vals[0]["v"]
         param = vals[0]["d"]
 
@@ -260,6 +264,8 @@ class Evaluator:
         self.score_precision = score_precision
         self.scorer = scorer
 
+    # Implementation of Newton-Raphson method
+    # https://en.wikipedia.org/wiki/Newton%27s_method
     def evaluate_derivative(self, inputs: list[Input]) -> list[float]:
         iter_count = 0
 
@@ -277,6 +283,8 @@ class Evaluator:
         x_next = [inp.curr for inp in inputs]
 
         while True:
+            if iter_count > self.max_iter_count:
+                return x_next
             iter_count += 1
             x_changed = False
 
@@ -309,7 +317,7 @@ class Evaluator:
 
 class EvaluatorAdapter():
 
-    res_memo: map[list[float], AVLResultParser]
+    res_memo: dict[list[float], AVLResultParser]
 
     def __init__(
         self,
@@ -327,7 +335,7 @@ class EvaluatorAdapter():
         self.evaluator = evaluator
         self.in_fp_base = input_file
         self.scorer = scorer
-        self.res_memo = set()
+        self.res_memo = {}
 
         scorer.set_ev_adapter(self)
 
@@ -358,26 +366,26 @@ class EvaluatorAdapter():
 
 
 def test():
-    with open("geometria.txt") as f:
+    with open("geometria.avl") as f:
         x = AVLFileParser(arquivo=f.read())
         print(json.dumps(x.structure, indent=4))
-        base_lbl = "children.surfaces"
-        for i in list(x.get_value(base_lbl)):
-            lbl = base_lbl + "." + str(i)
-            print(f"'{lbl}' = '{x.get_value(lbl)}'\n")
+        # base_lbl = "children.surfaces"
+        # for i in list(x.get_value(base_lbl)):
+        #     lbl = base_lbl + "." + str(i)
+        #     print(f"'{lbl}' = '{x.get_value(lbl)}'\n")
 
 
 def main():
-    cfg = read_file(CONFIG_FILE)
+    cfg = read_json(CONFIG_FILE)
 
-    input_fp = AVLFileParser(read_file(cfg["base_input_file"]))
+    input_fp = AVLFileParser(arquivo=read_file(cfg["base_input_file"]))
 
     avl = AVL(cfg["avl_env_path"], cfg["avl_input_file"],
               cfg["avl_output_file"])
 
     inputs = [
         Input(key=k, value=v, curr=input_fp.get_value(k))
-        for k, v in cfg["inputs"].values()
+        for k, v in cfg["inputs"].items()
     ]
 
     outputs = [Output(key=k) for k, v in cfg["outputs"].values()]
@@ -402,7 +410,8 @@ def main():
     out_avl_fp, out_analysis_fp = evaluator_adapter.optimize()
 
     write_file(cfg["final_input_file"], out_avl_fp.parse_into_file())
-    write_file(cfg["final_output_file"], out_analysis_fp.parse_into_file())
+    copy_file(cfg["avl_env_path"] + '/' + cfg["avl_output_file"],
+              cfg["final_output_file"])
 
 
 if __name__ == "__main__":

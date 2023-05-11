@@ -78,7 +78,7 @@
   "SECTION": {
     "expects": 1,
     "is_root": true,
-    "root_parent": "root",
+    "root_parent": "SURFACE",
     "parent_relationship_name": "sections"
   },
   "SURFACE": {
