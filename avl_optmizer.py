@@ -22,7 +22,7 @@ def write_file(target, content):
 
 
 def copy_file(source, target):
-    subprocess.call("cp " + source + " " + target)
+    subprocess.run("cp " + source + " " + target, shell=True)
 
 
 def read_file(target):
@@ -234,33 +234,22 @@ class Scorer:
     def set_ev_adapter(self, ev_adapter: 'EvaluatorAdapter'):
         self.ev_adatper = ev_adapter
 
-    def find_best_param(self, vals: list[dict[str, float]]) -> float:
-        raise NotImplementedError
-
     def get_score_from_outfile(self, fp: AVLResultParser) -> float:
         raise NotImplementedError
 
 
 class SumScorer(Scorer):
 
-    def find_best_param(self, vals: list[dict[str, float]]) -> float:
-        ans = vals[0]["v"]
-        param = vals[0]["d"]
-
-        for val in vals[1:]:
-            if val["v"] > ans:
-                ans = val["v"]
-                param = val["d"]
-        return param
-
+    # [TODO] Implementar uma função de score real
     def get_score_from_outfile(self, x: list[float]) -> float:
         out_fp, in_fp, inputs, outputs = \
             self.ev_adatper.get_results_from_avl(x)
 
         vals_sum = 0
-        for key in outputs:
-            val = float(out_fp.get_value(key))
+        for out in outputs:
+            val = float(out_fp.get_value(out.key))
             vals_sum += val
+        print("============== GOT NEW SCORE!!!!", vals_sum)
         return vals_sum
 
 
@@ -304,7 +293,7 @@ class Evaluator:
 
         min_variation = step_sizes.copy()
 
-        x_next = [inp.curr for inp in inputs]
+        x_next = [float(inp.curr) for inp in inputs]
 
         while True:
             if iter_count > self.max_iter_count:
@@ -367,12 +356,12 @@ class EvaluatorAdapter():
         vals = self.evaluator.evaluate_derivative(self.inputs)
         return self.get_avl_file_from_inputs(vals), self.get_results_from_avl(vals)
 
-    def get_results_from_avl(self, x: list[float]) -> AVLResultParser:
+    def get_results_from_avl(self, x: list[float]) -> tuple[AVLFileParser, AVLResultParser, list[Input], list[Output]]:
         in_fp = self.get_avl_file_from_inputs(x)
         if tuple(x) in self.res_memo:
             return self.res_memo[x], in_fp, self.inputs, self.outputs
 
-        # res = self.avl.analyse(in_fp)
+        self.avl.analyse(in_fp)
         out_fp = AVLResultParser(read_file("env/out.txt"))
 
         self.res_memo[tuple(x)] = out_fp
@@ -433,7 +422,7 @@ def main():
     out_avl_fp, out_analysis_fp = evaluator_adapter.optimize()
 
     write_file(cfg["final_input_file"], out_avl_fp.parse_into_file())
-    copy_file(cfg["avl_env_path"] + '/' + cfg["avl_output_file"],
+    copy_file(cfg["avl_env_path"] + cfg["avl_output_file"],
               cfg["final_output_file"])
 
 

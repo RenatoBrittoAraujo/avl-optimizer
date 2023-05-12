@@ -203,6 +203,8 @@ def build_avl_file(st: dict, depth: int = 0) -> str:
                 attr_names.append(attr_name)
                 if type(val) == list:
                     val = ' '.join(val)
+                if type(val) != str:
+                    val = str(val)
                 attrs.append(val)
             out += '#' + ' '.join(attr_names) + end()
             out += ' '.join(attrs) + end()
