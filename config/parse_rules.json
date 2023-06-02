@@ -1,0 +1,174 @@
+{
+  "AFILE": {
+    "expects": 1,
+    "expect_title": true
+  },
+  "ANGLE": {
+    "expects": 1
+  },
+  "Ainc": {
+    "expects": 1
+  },
+  "Bref": {
+    "expects": 1
+  },
+  "CDp": {
+    "expects": 1
+  },
+  "CLAF": {
+    "expects": 1
+  },
+  "COMPONENT": {
+    "expects": 1
+  },
+  "CONTROL": {
+    "expects": 1,
+    "is_root": true,
+    "root_parent": "SECTION",
+    "parent_relationship_name": "controls",
+    "attribute_groups": [["name", "gain", "Cname", "Cgain", "Xhinge", "HingeVec", "XYZhvec", "SgnDup"]]
+  },
+  "Cgain": {
+    "expects": 1
+  },
+  "Chord": {
+    "expects": 1
+  },
+  "Cname": {
+    "expects": 1
+  },
+  "Cref": {
+    "expects": 1
+  },
+  "Cspace": {
+    "expects": 1
+  },
+  "Fuselage": {
+    "expects": 1
+  },
+  "HingeVec": {
+    "expects": 3
+  },
+  "IYsym": {
+    "expects": 1
+  },
+  "IZsym": {
+    "expects": 1
+  },
+  "Mach": {
+    "expects": 1
+  },
+  "NOWAKE": {
+    "expects": 1
+  },
+  "Nchordwise": {
+    "expects": 1
+  },
+  "Nspanwise": {
+    "expects": 1
+  },
+  "Right_Wing": {
+    "expects": 1
+  },
+  "Right_flap": {
+    "expects": 1
+  },
+  "SCALE": {
+    "expects": 3
+  },
+  "SECTION": {
+    "expects": 1,
+    "is_root": true,
+    "root_parent": "SURFACE",
+    "parent_relationship_name": "sections",
+    "attribute_groups": [["Xle", "Yle", "Zle", "Chord", "Ainc", "Nspanwise", "Sspace"]]
+  },
+  "SURFACE": {
+    "expects": 1,
+    "expect_title": true,
+    "is_root": true,
+    "root_parent": "root",
+    "parent_relationship_name": "surfaces",
+    "attribute_groups": [["Nchordwise", "Cspace", "Nspanwise", "Sspace"]]
+  },
+  "SgnDup": {
+    "expects": 1
+  },
+  "Sref": {
+    "expects": 1
+  },
+  "Sspace": {
+    "expects": 1
+  },
+  "TRANSLATE": {
+    "expects": 3
+  },
+  "V": {
+    "expects": 1
+  },
+  "XYZhvec": {
+    "expects": 3
+  },
+  "Xhinge": {
+    "expects": 1
+  },
+  "Xle": {
+    "expects": 1
+  },
+  "Xref": {
+    "expects": 1
+  },
+  "YDUPLICATE": {
+    "expects": 1
+  },
+  "Yle": {
+    "expects": 1
+  },
+  "Yref": {
+    "expects": 1
+  },
+  "Zle": {
+    "expects": 1
+  },
+  "Zref": {
+    "expects": 1
+  },
+  "Zsym": {
+    "expects": 1
+  },
+  "elevator": {
+    "expects": 1
+  },
+  "emp_horizontal": {
+    "expects": 1
+  },
+  "emp_vertical": {
+    "expects": 1
+  },
+  "flaperon": {
+    "expects": 1
+  },
+  "gain": {
+    "expects": 1
+  },
+  "load": {
+    "expects": 1
+  },
+  "name": {
+    "expects": 1
+  },
+  "rudder": {
+    "expects": 1
+  },
+  "root": {
+    "expects": 1,
+    "expect_title": true,
+    "attribute_groups": [
+      ["Mach"],
+      ["IYsym", "IZsym", "Zsym"],
+      ["Sref", "Cref", "Bref"],
+      ["Xref", "Yref", "Zref"],
+      ["CDp"]
+    ]
+  }
+}

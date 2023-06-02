@@ -1,3 +1,6 @@
+# avl-optimizer
+
+Esse programa é um wrapper ao redor do programa [avl](https://www.avl.com/en/simulation-solutions) que automaticamente otimiza parâmetros da estrutura de um veículo que voa no ar. A otimização acontece pelo método numérico de Newton-Raphson, onde uma derivada é calculada sobre uma *função de pontuação* f(x). O valor f'(x), calculado numericamente, pode ser usado para decidir qual dire   
 
 ## Arquivos & Pastas
 
@@ -5,10 +8,32 @@
 - `geometria.avl`: Arquivo de entrada do AVL, no seu formato original. Edite aqui.
 - `otimizado.avl`: Arquivo de saída do script, no seu formato original. Aqui estará o resultado do programa.
 - `output.txt`: Saída do programa AVL ao usar comando `ST`.
+- `config.json`: Todos as configurações do cálculo.
 - `avl_files/`:  Arquivos da internet pra auxiliar o desenvolvimento. Documentação do AVL.
 - `target_env/`:  Arquivos que compõem ambiente alvo do avl (aka. uma réplica do seu computador)
 - `env/`: Arquivos que compõem ambiente atual que o avl será executado.
 - `input_files/`: Arquivos `.avl` de input pra testar o programa.
+
+No arquivo `avl_optmizer.py` é possível encontrar a classe `SumScorer(Scorer)` que contém a função `get_score_from_outfile(x)`. Essa função implementa o sistema de score que será usado para otimizar.
+
+## TODO
+
+- Marcar todos os inputs baseado no json formado
+- SECTIONS fazem parte da SURFACE
+- Escrever parser geral do arquivo de saída
+
+## DONE
+
+- Scaffold codigo
+- Achar executável AVL
+- Achar documentação AVL
+- Achar exemplos de entrada e saída AVL
+- Executa instancia do programa em terminal virtual
+- Envia algum comando pro terminal virtual
+
+## TODO (precisa mesmo?)
+
+- Lê algo do terminal virtual
 
 ## Funcionamento do progama
 
@@ -109,7 +134,7 @@ INVESTIGAR
 Os inputs são:
 | tag                                                                   | range  | significado |
 | --------------------------------------------------------------------- | ------ | ----------- |
-| `children.surfaces.emp horizontal.children.YDUPLICATE`                | [0, 1] | ??          |
+| `children.surfaces.emp horizontal.children.YDUPLICATE`                | [1, 1] | ??          |
 | `children.surfaces.emp horizontal.children.ANGLE`                     | [0, n] | ??          |
 | `children.surfaces.emp horizontal.children.TRANSLATE.0`               | [0, n] | X ??        |
 | `children.surfaces.emp horizontal.children.TRANSLATE.1`               | [0, n] | Y ??        |
@@ -117,7 +142,7 @@ Os inputs são:
 | `children.surfaces.emp horizontal.children.sections.*.children.Xle`   | [0, n] | ??          |
 | `children.surfaces.emp horizontal.children.sections.*.children.Yle`   | [0, n] | ??          |
 | `children.surfaces.emp horizontal.children.sections.*.children.Zle`   | [0, n] | ??          |
-| `children.surfaces.emp horizontal.children.sections.*.children.Chord` | [0, n] | ??          |****
+| `children.surfaces.emp horizontal.children.sections.*.children.Chord` | [0, n] | ??          | **** |
 
 SURFACES A SE ANALISAR:
 a idéia é ficar a asa e mexer só na empenagem
@@ -158,21 +183,6 @@ Os outputs são:
 
 A envergadura consiste em encontrar o ponto mais longe do centro no eixo Y dentro das surfaces. O módulo dessa distância `*2` é igual a envergadura, porque o centro do avião está no centro de Y.
 
-## TODO
+##
 
-- Marcar todos os inputs baseado no json formado
-- SECTIONS fazem parte da SURFACE
-- Escrever parser geral do arquivo de saída
-
-## DONE
-
-- Scaffold codigo
-- Achar executável AVL
-- Achar documentação AVL
-- Achar exemplos de entrada e saída AVL
-- Executa instancia do programa em terminal virtual
-- Envia algum comando pro terminal virtual
-
-## TODO (precisa mesmo?)
-
-- Lê algo do terminal virtual
+Diminuir N-space S-space para aumentar velocidade da simulação
