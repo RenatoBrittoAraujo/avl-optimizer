@@ -18,22 +18,8 @@ No arquivo `avl_optmizer.py` é possível encontrar a classe `SumScorer(Scorer)`
 
 ## TODO
 
-- Marcar todos os inputs baseado no json formado
-- SECTIONS fazem parte da SURFACE
-- Escrever parser geral do arquivo de saída
-
-## DONE
-
-- Scaffold codigo
-- Achar executável AVL
-- Achar documentação AVL
-- Achar exemplos de entrada e saída AVL
-- Executa instancia do programa em terminal virtual
-- Envia algum comando pro terminal virtual
-
-## TODO (precisa mesmo?)
-
-- Lê algo do terminal virtual
+- Fazer o CTRL+C para o programa.
+- Rodar terminal de forma oculta sem relação com terminal original.
 
 ## Funcionamento do progama
 

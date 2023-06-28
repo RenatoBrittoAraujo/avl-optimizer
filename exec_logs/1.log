@@ -1,0 +1,24 @@
+[0] sending in dict hashed as = d80540db9ef9857a293d48e2b0e61ae4
+[0] running a thread....
+[0] thread ended!
+AVL ERROR!
+[0] stderr: b"At line 1625 of file ../src/aoper.f (unit = 5, file = 'stdin')\nFortran runtime error: End of file\n"
+Adding 0 to results: {'structure': {'Surfaces': '10', 'Strips': '147', 'Vortices': '2456', 'Sref': '0.39034', 'Cref': '0.28100', 'Bref': '1.4730', 'Xref': '0.0000', 'Yref': '0.0000', 'Zref': '-0.70000E-01', 'Alpha': '0.00000', 'pb/2V': '-0.00000', "p'b/2V": '-0.00000', 'Beta': '0.00000', 'qc/2V': '0.00000', 'Mach': '0.000', 'rb/2V': '-0.00000', "r'b/2V": '-0.00000', 'CXtot': '-0.01979', 'Cltot': '-0.00000', "Cl'tot": '-0.00000', 'CYtot': '0.00000', 'Cmtot': '0.19341', 'CZtot': '-0.47811', 'Cntot': '-0.00000', "Cn'tot": '-0.00000', 'CLtot': '0.47811', 'CDtot': '0.01979', 'CDvis': '0.00000', 'CDind': '0.0197947', 'CLff': '0.47797', 'CDff': '0.0221800', 'CYff': '0.00000', 'e': '0.5898', 'flaperon': '0.00000', 'elevator': '0.00000', 'rudder': '0.00000', 'CLa': '5.583371', 'CLb': '-0.000000', 'CYa': '0.000000', 'CYb': '-0.245984', 'Cla': '-0.000000', 'Clb': '-0.064577', 'Cma': '-0.902036', 'Cmb': '0.000000', 'Cna': '-0.000000', 'Cnb': '0.067156', 'CLp': '0.000000', 'CLq': '10.239977', 'CLr': '-0.000000', 'CYp': '0.028715', 'CYq': '-0.000000', 'CYr': '0.184588', 'Clp': '-0.527452', 'Clq': '-0.000000', 'Clr': '0.166628', 'Cmp': '-0.000000', 'Cmq': '-11.679779', 'Cmr': '0.000000', 'Cnp': '-0.002406', 'Cnq': '0.000000', 'Cnr': '-0.089882', 'CLd01': '0.000000', 'CLd02': '0.010368', 'CLd03': '-0.000000', 'CYd01': '0.000033', 'CYd02': '0.000000', 'CYd03': '-0.002300', 'Cld01': '-0.005966', 'Cld02': '0.000000', 'Cld03': '-0.000435', 'Cmd01': '-0.000000', 'Cmd02': '-0.027749', 'Cmd03': '0.000000', 'Cnd01': '-0.000549', 'Cnd02': '-0.000000', 'Cnd03': '0.001186', 'CDffd01': '0.000000', 'CDffd02': '-0.000627', 'CDffd03': '-0.000000', 'ed01': '-0.000000', 'ed02': '0.042223', 'ed03': '0.000000', 'Neutral point Xnp': '0.045398', 'Clb Cnr / Clr Cnb': '0.518703'}}
+results is: {0: <__main__.AVLResultParser object at 0x7fdf1e2c7af0>}
+[0] get result hashed as = 2903156dfb2b65ec1dd398edcc93c9aa
+============== GOT NEW SCORE!!!! -0.14495470000000002
+d = 0.14495470000000002
+changing 'children.surfaces.emp_horizontal.children.YDUPLICATE' from 0.0 to 0.14495470000000002
+[1] sending in dict hashed as = 062953aa75bf17f007ef77344313587e
+[1] running a thread....
+[1] thread ended!
+AVL ERROR!
+[1] stderr: b"At line 1625 of file ../src/aoper.f (unit = 5, file = 'stdin')\nFortran runtime error: End of file\n"
+Adding 1 to results: {'structure': {'Surfaces': '10', 'Strips': '147', 'Vortices': '2456', 'Sref': '0.39034', 'Cref': '0.28100', 'Bref': '1.4730', 'Xref': '0.0000', 'Yref': '0.0000', 'Zref': '-0.70000E-01', 'Alpha': '0.00000', 'pb/2V': '-0.00000', "p'b/2V": '-0.00000', 'Beta': '0.00000', 'qc/2V': '0.00000', 'Mach': '0.000', 'rb/2V': '-0.00000', "r'b/2V": '-0.00000', 'CXtot': '-0.01979', 'Cltot': '-0.00000', "Cl'tot": '-0.00000', 'CYtot': '0.00000', 'Cmtot': '0.19341', 'CZtot': '-0.47811', 'Cntot': '-0.00000', "Cn'tot": '-0.00000', 'CLtot': '0.47811', 'CDtot': '0.01979', 'CDvis': '0.00000', 'CDind': '0.0197947', 'CLff': '0.47797', 'CDff': '0.0221800', 'CYff': '0.00000', 'e': '0.5898', 'flaperon': '0.00000', 'elevator': '0.00000', 'rudder': '0.00000', 'CLa': '5.583371', 'CLb': '-0.000000', 'CYa': '0.000000', 'CYb': '-0.245984', 'Cla': '-0.000000', 'Clb': '-0.064577', 'Cma': '-0.902036', 'Cmb': '0.000000', 'Cna': '-0.000000', 'Cnb': '0.067156', 'CLp': '0.000000', 'CLq': '10.239977', 'CLr': '-0.000000', 'CYp': '0.028715', 'CYq': '-0.000000', 'CYr': '0.184588', 'Clp': '-0.527452', 'Clq': '-0.000000', 'Clr': '0.166628', 'Cmp': '-0.000000', 'Cmq': '-11.679779', 'Cmr': '0.000000', 'Cnp': '-0.002406', 'Cnq': '0.000000', 'Cnr': '-0.089882', 'CLd01': '0.000000', 'CLd02': '0.010368', 'CLd03': '-0.000000', 'CYd01': '0.000033', 'CYd02': '0.000000', 'CYd03': '-0.002300', 'Cld01': '-0.005966', 'Cld02': '0.000000', 'Cld03': '-0.000435', 'Cmd01': '-0.000000', 'Cmd02': '-0.027749', 'Cmd03': '0.000000', 'Cnd01': '-0.000549', 'Cnd02': '-0.000000', 'Cnd03': '0.001186', 'CDffd01': '0.000000', 'CDffd02': '-0.000627', 'CDffd03': '-0.000000', 'ed01': '-0.000000', 'ed02': '0.042223', 'ed03': '0.000000', 'Neutral point Xnp': '0.045398', 'Clb Cnr / Clr Cnb': '0.518703'}}
+results is: {1: <__main__.AVLResultParser object at 0x7fdf1e2c7850>}
+[1] get result hashed as = 2903156dfb2b65ec1dd398edcc93c9aa
+============== GOT NEW SCORE!!!! -0.14495470000000002
+d = 0.14495470000000002
+changing 'children.surfaces.emp_horizontal.children.ANGLE' from -3.0 to -2.8550453
+[2] sending in dict hashed as = 72115472b2b16b4bd7e59cd884037542
+[2] running a thread....
