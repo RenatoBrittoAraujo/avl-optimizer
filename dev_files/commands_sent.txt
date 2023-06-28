@@ -1,8 +1,3 @@
-LOAD in_0.avl
-OPER
-X
-ST
-out_0.txt
 LOAD in_1.avl
 OPER
 X

@@ -46,11 +46,8 @@ def copy_file(source, target):
 
 
 def read_file(target):
-    txt = ""
     with open(target) as f:
-        txt = f.read()
-    return txt
-
+        return f.read()
 
 def read_json(file):
     with open(file, "r") as f:
@@ -59,8 +56,9 @@ def read_json(file):
 
 def delete_file(target):
     try:
-        subprocess.call("rm " + target)
-    except Exception:
+        subprocess.call(["rm", target])
+    except Exception as e:
+        print("ERROR! tried to delete file", target, "but failed because", e)
         pass
 
 
@@ -71,6 +69,11 @@ class FileParser:
         if arquivo:
             self.structure = self.parse_from_file(arquivo)
         elif structure:
+            if type(structure) != dict:
+                if isinstance(structure, FileParser):
+                    structure = structure.structure
+                else:
+                    raise Exception("error: structure must be a dict")
             self.structure = copy.deepcopy(structure)
         else:
             raise Exception("error: no file or structure provided")
@@ -171,28 +174,21 @@ class AVLResultParser(FileParser):
 
 # interact with program itself
 
-
-class AVL:
+class AVLInstance:
     command_list: str
     avl_folder_path: str
     input_file: str
     output_file: str
     overwrite_any: bool
-    max_threads: int
 
-    tid: int
-    queue: list[dict[str, any]]
-    running_threads: list[dict[str, any]]
-    event: threading.Event
-    results: dict
+    thread_id: int
 
     def __init__(
         self,
         avl_folder_path: str,
         input_file: str,
         output_file: str,
-        overwrite_any: bool = False,
-        max_threads: int = 1,
+        overwrite_any: bool,
     ):
         if not avl_folder_path.endswith("/"):
             avl_folder_path += "/"
@@ -204,60 +200,11 @@ class AVL:
         self.output_file = output_file
         self.command_list = ""
         self.overwrite_any = overwrite_any
-        self.max_threads = max_threads
-        self.running_threads = []
-        self.tid = 0
-        self.event = threading.Event()
-        self.results = {}
 
     def add_command(self, cmd: str):
         self.command_list += cmd + "\n"
 
-    def create_in_out_file(self, tid: int):
-        inp = self.avl_folder_path + self.input_file.replace(".avl", f"_{tid}.avl")
-        out = self.avl_folder_path + self.output_file.replace(".txt", f"_{tid}.txt")
-
-        # if exists(out):
-        #     if self.overwrite_any:
-        #         delete_file(out)
-        #     else:
-        #         raise Exception("error: file '" + out + "' is not overwritable")
-
-        # if not exists(inp):
-        #     raise Exception("error: avl input file " + inp + " does not exist")
-
-        return inp, out
-
-    def analyse(self, in_fp: AVLFileParser) -> AVLResultParser:
-        self.wait_queue_space_if_any()
-
-        c_tid = self.get_thread_id()
-        inf, ouf = self.create_in_out_file(c_tid)
-
-        print(f"[{c_tid}] sending in dict hashed as = {get_dict_hash(in_fp.__dict__)}")
-        t = threading.Thread(
-            target=self.analyse_thread,
-            args=(c_tid, self.event, in_fp, inf, ouf, self.results),
-            daemon=True,
-        )
-        self.running_threads.append(t)
-        t.start()
-
-        # isso deveria funcionar baseado em eventos de thread terminando
-        # mas ainda não foi implementado
-        t.join()
-
-        print("results is:", self.results)
-        if c_tid in self.results:
-            result = self.results[c_tid]
-            delete_file(ouf)
-            print(f"[{c_tid}] get result hashed as = {get_dict_hash(result.__dict__)}")
-            del self.results[c_tid]
-            return result
-        else:
-            print(f"ERROR thread {c_tid} has not given any results!!!!")
-
-    def analyse_thread(
+    def analyse(
         self,
         c_tid: int,
         end_event: threading.Event,
@@ -266,6 +213,8 @@ class AVL:
         ouf: str,
         results: dict,
     ) -> AVLResultParser:
+        self.thread_id = c_tid
+
         write_file(inf, in_fp.parse_into_file())
         delete_file(ouf)
 
@@ -273,7 +222,7 @@ class AVL:
 
         res_str = read_file(ouf)
         res_fp = AVLResultParser(arquivo=res_str)
-        print(f"Adding {c_tid} to results: {res_fp.__dict__}")
+
         results[c_tid] = res_fp
 
         end_event.set()
@@ -319,21 +268,100 @@ class AVL:
             "At line 145 of file ../src/userio.f (unit = 5, file = 'stdin')\nFortran runtime error: End of file\n",
             "",
         )
-        if err != "":
-            print("AVL ERROR!")
-            print(f"[{c_tid}] stderr: {process.stderr}")
+
+        # [TODO] parse de erros aqui
+        # if err != "":
+        #     print("AVL ERROR!")
+        #     print(f"[{c_tid}] stderr: {process.stderr}")
 
         return process
+   
 
-    def wait_queue_space_if_any(self):
-        if len(self.running_threads) < self.max_threads:
-            return
+class AVL:
+    command_list: str
+    avl_folder_path: str
+    input_file: str
+    output_file: str
+    overwrite_any: bool
+    max_threads: int
+
+    tid: int
+    queue: list[dict[str, any]]
+    running_threads: list[dict[str, any]]
+    event: threading.Event
+    results: dict
+
+    def __init__(
+        self,
+        avl_folder_path: str,
+        input_file: str,
+        output_file: str,
+        max_threads: int = 1,
+        overwrite_any: bool = False,
+    ):
+        self.avl_folder_path = avl_folder_path
+        self.input_file = input_file
+        self.output_file = output_file
+        self.overwrite_any = overwrite_any
+        self.max_threads = max_threads
+        self.running_threads = []
+        self.tid = 0
+        self.event = threading.Event()
+        self.results = {}
+
+    def create_in_out_file(self, tid: int):
+        inp = self.avl_folder_path + self.input_file.replace(".avl", f"_{tid}.avl")
+        out = self.avl_folder_path + self.output_file.replace(".txt", f"_{tid}.txt")
+        return inp, out
+
+    def analyse(self, in_fp: AVLFileParser) -> AVLResultParser:
+        self.wait_queue_space_if_any()
+
+        c_tid = self.get_thread_id()
+        inf, ouf = self.create_in_out_file(c_tid)
+
+        print(f"[{c_tid}] sending in dict hashed as = {get_dict_hash(in_fp.__dict__)}")
+        print(f"[{c_tid}] input file for instance = {inf}")
+        print(f"[{c_tid}] output file for instance = {ouf}")
+
+        avl_intance = AVLInstance(
+            avl_folder_path=self.avl_folder_path,
+            input_file=inf,
+            output_file=ouf,
+            overwrite_any=self.overwrite_any
+        )
+
+        t = threading.Thread(
+            target=avl_intance.analyse,
+            args=(c_tid, self.event, in_fp, inf, ouf, self.results),
+            daemon=True,
+        )
+        self.running_threads.append(t)
+        t.start()
+
+        # isso deveria funcionar baseado em eventos de thread terminando
+        # mas ainda não foi implementado
+        t.join()
+
+        if c_tid in self.results:
+            print(f"[{c_tid}] output file created for this instance = {ouf}")
+            self.running_threads.remove(t)
+            result = self.results[c_tid]
+            # delete_file(ouf)
+            print(f"[{c_tid}] get result hashed as = {get_dict_hash(result.__dict__)}")
+            del self.results[c_tid]
+            return result
+        else:
+            print(f"ERROR thread {c_tid} has not given any results!!!!")
 
     def get_thread_id(self) -> int:
         c_tid = self.tid
         self.tid += 1
         return c_tid
-
+    
+    def wait_queue_space_if_any(self):
+        if len(self.running_threads) < self.max_threads:
+            return
 
 class Input:
     key: str
@@ -432,9 +460,9 @@ class V1Scorer(Scorer):
         inputs: list[Input],
         outputs: list[Output],
     ) -> tuple[float, list[str]]:
-        # NOTA: Não inclue garantias de controle ainda!
-        # NOTA: Não tem garantias e limites de tamanho!
-        # NOTA: Não inclue o caso '!Para caso em alpha = 0'
+        # [TODO] NOTA: Não inclue garantias de controle ainda!
+        # [TODO] NOTA: Não tem garantias e limites de tamanho!
+        # [TODO] NOTA: Não inclue o caso '!Para caso em alpha = 0'
 
         erros = []
 
@@ -627,8 +655,9 @@ class AppState:
 
         self.avl = AVL(
             self.cfg["avl_env_path"],
-            self.cfg["avl_input_file"],
-            self.cfg["avl_output_file"],
+            input_file=self.cfg["avl_input_file"],
+            output_file=self.cfg["avl_output_file"],
+            max_threads=1,
             overwrite_any=True,
         )
 
@@ -666,16 +695,21 @@ def test():
     if1 = AVLFileParser(structure=app.input_fp)
     if2 = AVLFileParser(structure=app.input_fp)
 
-    if2.set_value("Chord", 0.1)
-# SECTION_3
-    f1 = read_file("env/in_test_1_out.txt")
-    f2 = read_file("env/in_test_2_out.txt")
+    # vamos dobrar a corda de todas as surfaces mais longe do centro (Y=0) da asa
+    # no caso seria o flap e asa (basta ver o arquivo dev_files/estrutura_flat_input.json)
+    # pra ver como isso afeta o resultado, como teste
 
-    f1 = AVLResultParser(arquivo=f1)
-    f2 = AVLResultParser(arquivo=f2)
+    v1 = if2.get_value("children.surfaces.Right_Wing.children.sections.SECTION_3.children.Chord")
+    v2 = if2.get_value("children.surfaces.Right_flap.children.sections.SECTION_3.children.Chord")
 
-    # write_file("vt1.txt", f1.parse_into_file())
-    # write_file("vt2.txt", f2.parse_into_file())
+    v1 = str(float(v1)*2.0)
+    v2 = str(float(v2)*2.0)
+
+    if2.set_value("children.surfaces.Right_Wing.children.sections.SECTION_3.children.Chord", v1)
+    if2.set_value("children.surfaces.Right_flap.children.sections.SECTION_3.children.Chord", v2)
+
+    f2 = app.avl.analyse(if2)
+    f1 = app.avl.analyse(if1)
 
     s1, _ = app.scorer.get_score(None, f1, None, None)
     s2, _ = app.scorer.get_score(None, f2, None, None)
@@ -699,5 +733,4 @@ def prod():
 
 if __name__ == "__main__":
     # prod()
-    # test()
-    print_structure_keys()
+    test()

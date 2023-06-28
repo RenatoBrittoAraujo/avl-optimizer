@@ -18,8 +18,9 @@ No arquivo `avl_optmizer.py` é possível encontrar a classe `SumScorer(Scorer)`
 
 ## TODO
 
-- Fazer o CTRL+C para o programa.
-- Rodar terminal de forma oculta sem relação com terminal original.
+- Consertar os problemas do arquivo AVL escrito sendo lido incorretamente, que causa o score permanecer exatamente igual quando mudo arquivos via código mas é diferente quando mudo arquivos manualmente
+- O arquivo de entrada muda, o programa é chamado com os comandos corretos, mas o arquivo de saída é exatamente o mesmo??
+- Rodei e só sobrou um arquivo `out_0.txt`
 
 ## Funcionamento do progama
 
