@@ -183,6 +183,28 @@ Os outputs são:
 
 A envergadura consiste em encontrar o ponto mais longe do centro no eixo Y dentro das surfaces. O módulo dessa distância `*2` é igual a envergadura, porque o centro do avião está no centro de Y.
 
-##
+## Notas
 
 Diminuir N-space S-space para aumentar velocidade da simulação
+
+## 27/6/23 - Fórmulas
+
+Lista de limitadores:
+\Garantindo estabilidade
+Clb Cnr / Clr Cnb  > 1
+Cma < 0
+Clb < 0
+Cnb > 0
+\Garantindo controlabiliade, pode ser feito separadamente
+
+|Cm(elevador)| >= 0.03
+cld0{X}
+|Cl(flaperon)| >= 0.005 !Depende de flaperon mais do que de cauda
+|Cn(leme)| >= 0.0012
+\Equação de pontuação
+
+P = -0.1*(|Cma - 0.675|) + -0.1(|Cnb - 0.07|) + -0.1(|Clb - 0.07|) + +0.1CLtot + -0.1CDtot + -0.1Cmtot 
+
+tamanho
+
+!Para caso em alpha = 0

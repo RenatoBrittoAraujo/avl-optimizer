@@ -110,13 +110,13 @@ emp_horizontal
 #Nchordwise Cspace Nspanwise Sspace
 26 1.0 8 1.0
 YDUPLICATE
-0.14495470000000002 
+0.0 
 ANGLE
--2.8550453 
+-3.0 
 SCALE
 1.0 1.0 1.0 
 TRANSLATE
-0.9049547 0.14495470000000002 0.11 
+0.76 0.0 0.11 
 #---------------
 SECTION
 #Xle Yle Zle Chord Ainc

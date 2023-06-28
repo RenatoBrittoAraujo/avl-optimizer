@@ -234,14 +234,14 @@ class Scorer:
     def set_ev_adapter(self, ev_adapter: 'EvaluatorAdapter'):
         self.ev_adatper = ev_adapter
 
-    def get_score_from_outfile(self, fp: AVLResultParser) -> float:
+    def get_score_from_outfile(self, fp: AVLResultParser) -> tuple[float, list[str]]:
         raise NotImplementedError
 
 
 class SumScorer(Scorer):
 
     # [TODO] Implementar uma função de score real
-    def get_score_from_outfile(self, x: list[float]) -> float:
+    def get_score_from_outfile(self, x: list[float]) -> tuple[float, list[str]]:
         out_fp, in_fp, inputs, outputs = \
             self.ev_adatper.get_results_from_avl(x)
 
@@ -250,7 +250,81 @@ class SumScorer(Scorer):
             val = float(out_fp.get_value(out.key))
             vals_sum += val
         print("============== GOT NEW SCORE!!!!", vals_sum)
-        return vals_sum
+        return vals_sum, None
+
+
+class V1Scorer(Scorer):
+
+    # Lista de limitadores:
+    # \Garantindo estabilidade
+    # Clb Cnr / Clr Cnb  > 1
+    # Cma < 0
+    # Clb < 0
+    # Cnb > 0
+    # \Garantindo controlabiliade, pode ser feito separadamente
+    # |Cm(elevador)| >= 0.03
+    # |Cl(flaperon)| >= 0.005 !Depende de flaperon mais do que de cauda
+    # |Cn(leme)| >= 0.0012
+
+    # \Equação de pontuação
+    # P = -0.1*(|Cma - 0.675|) + -0.1(|Cnb - 0.07|) + -0.1(|Clb - 0.07|) + +0.1CLtot + -0.1CDtot + -0.1Cmtot
+
+    # retorna score e os erros que ocorreram
+    def get_score_from_outfile(self, x: list[float]) -> tuple[float, list[str]]:
+        # NOTA: Não inclue garantias de controle ainda!
+        # NOTA: Não tem garantias e limites de tamanho!
+        # NOTA: Não inclue o caso '!Para caso em alpha = 0'
+
+        erros = []
+
+        out_fp, in_fp, inputs, outputs = \
+            self.ev_adatper.get_results_from_avl(x)
+
+        # outputs:
+        Clb_Cnr_over_Clr_Cnb = float(out_fp.get_value("Clb Cnr / Clr Cnb"))
+        Cma = float(out_fp.get_value("Cma"))
+        Cnb = float(out_fp.get_value("Cnb"))
+        Clb = float(out_fp.get_value("Clb"))
+        CLtot = float(out_fp.get_value("CLtot"))
+        CDtot = float(out_fp.get_value("CDtot"))
+        Cmtot = float(out_fp.get_value("Cmtot"))
+
+        condicoes = [
+            {
+                "cond": Clb_Cnr_over_Clr_Cnb > 1,
+                "erro": "falha de estabilidade - Clb_Cnr_over_Clr_Cnb <= 1"
+            },
+            {
+                "cond": Cma < 0,
+                "erro": "falha de estabilidade - Cma >= 0"
+            },
+            {
+                "cond": Clb < 0,
+                "erro": "falha de estabilidade - Clb >= 0"
+            },
+            {
+                "cond": Cnb > 0,
+                "erro": "falha de estabilidade - Cnb <= 0"
+            },
+        ]
+
+        for cond in condicoes:
+            if cond["cond"] != True:
+                erros.append(cond["erro"])
+
+        # if len(erros) > 0:
+        #     return 0, erros
+
+        P = \
+            -0.1*math.fabs(Cma - 0.675) +\
+            -0.1*math.fabs(Cnb - 0.07) +\
+            -0.1*math.fabs(Clb - 0.07) +\
+            +0.1*CLtot +\
+            -0.1*CDtot +\
+            -0.1*Cmtot
+
+        print("============== GOT NEW SCORE!!!!", P)
+        return P, None
 
 
 class Evaluator:
@@ -308,15 +382,18 @@ class Evaluator:
                 if iter_count > self.limit_iter_count:
                     step_sizes[i] = step_sizes[i] * self.limit_variation_factor
 
-                fx = self.scorer.get_score_from_outfile(x_next)
+                fx, errors = self.scorer.get_score_from_outfile(x_next)
+                if errors is not None:
+                    print("ERROS!\n", errors)
                 variation = step_sizes[i]
 
                 # d = f(x) / (x1 - x2)
                 d = fx / -variation
 
-                if math.fabs(d*step_sizes[i]) < min_variation[i]:
-                    continue
-                elif d > 0:
+                # if math.fabs(d*step_sizes[i]) < min_variation[i]:
+                #     continue
+                # el
+                if d > 0:
                     x_next[i] = x_next[i] + step_sizes[i]*d
                 else:
                     x_next[i] = x_next[i] - step_sizes[i]*d
@@ -359,7 +436,7 @@ class EvaluatorAdapter():
     def get_results_from_avl(self, x: list[float]) -> tuple[AVLFileParser, AVLResultParser, list[Input], list[Output]]:
         in_fp = self.get_avl_file_from_inputs(x)
         if tuple(x) in self.res_memo:
-            return self.res_memo[x], in_fp, self.inputs, self.outputs
+            return self.res_memo[tuple(x)], in_fp, self.inputs, self.outputs
 
         self.avl.analyse(in_fp)
         out_fp = AVLResultParser(read_file("env/out.txt"))
@@ -402,7 +479,7 @@ def main():
 
     outputs = [Output(key=k) for k, v in cfg["outputs"].items()]
 
-    scorer = SumScorer()
+    scorer = V1Scorer()
 
     evaluator = Evaluator(
         max_iter_count=cfg["max_iter_count"],
