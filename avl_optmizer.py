@@ -49,6 +49,7 @@ def read_file(target):
     with open(target) as f:
         return f.read()
 
+
 def read_json(file):
     with open(file, "r") as f:
         return json.load(f)
@@ -109,7 +110,7 @@ class FileParser:
 
     def parse_from_file(self, arquivo: str):
         raise NotImplementedError
-    
+
     def flatten(self) -> dict:
         return self.__flatten(self.structure, "")
 
@@ -117,7 +118,7 @@ class FileParser:
         if o is None:
             o = self.structure
         if type(o) != dict and type(o) != list:
-            return {s:o}
+            return {s: o}
         res = {}
         for k, v in o.items():
             vs = s
@@ -151,9 +152,6 @@ class FileParser:
             obj[key] = val
 
 
-
-
-
 class AVLFileParser(FileParser):
     def parse_into_file(self) -> str:
         if self.structure is None:
@@ -173,6 +171,7 @@ class AVLResultParser(FileParser):
 
 
 # interact with program itself
+
 
 class AVLInstance:
     command_list: str
@@ -275,7 +274,7 @@ class AVLInstance:
         #     print(f"[{c_tid}] stderr: {process.stderr}")
 
         return process
-   
+
 
 class AVL:
     command_list: str
@@ -328,7 +327,7 @@ class AVL:
             avl_folder_path=self.avl_folder_path,
             input_file=inf,
             output_file=ouf,
-            overwrite_any=self.overwrite_any
+            overwrite_any=self.overwrite_any,
         )
 
         t = threading.Thread(
@@ -358,10 +357,11 @@ class AVL:
         c_tid = self.tid
         self.tid += 1
         return c_tid
-    
+
     def wait_queue_space_if_any(self):
         if len(self.running_threads) < self.max_threads:
             return
+
 
 class Input:
     key: str
@@ -445,6 +445,12 @@ class V1Scorer(Scorer):
     # \Equação de pontuação
     # P = -0.1*(|Cma - 0.675|) + -0.1(|Cnb - 0.07|) + -0.1(|Clb - 0.07|) + +0.1CLtot + -0.1CDtot + -0.1Cmtot
 
+    def validate(self, input_fp: AVLFileParser):
+        corda = 180  # mm
+        corda = 180  # mm
+
+        return True
+
     # retorna score e os erros que ocorreram
     def get_score_from_outfile(self, x: list[float]) -> tuple[float, list[str]]:
         # print("feeding avl this: ...")
@@ -460,9 +466,14 @@ class V1Scorer(Scorer):
         inputs: list[Input],
         outputs: list[Output],
     ) -> tuple[float, list[str]]:
-        # [TODO] NOTA: Não inclue garantias de controle ainda!
         # [TODO] NOTA: Não tem garantias e limites de tamanho!
-        # [TODO] NOTA: Não inclue o caso '!Para caso em alpha = 0'
+        # - to fazendo
+        # - limitado direito no input
+        # [TODO] NOTA: Não inclue garantias de controle ainda!
+        # - depois
+        # [TODO] NOTA: LIMITAÇõES POSICIONAMENTO - onde a cauda pode ficar, por exemplo
+        # - aleef vai manda
+        # - não é prioridade
 
         erros = []
 
@@ -487,6 +498,11 @@ class V1Scorer(Scorer):
 
         for cond in condicoes:
             if cond["cond"] != True:
+                # [TODO] NOTA: Não acontece nada quando uma condição é quebrada
+                # - encontre sua própria solução, o resultado final precisa atender elas
+                # - já ta parametrizado na formula alguns desses
+                # - talvez adicionar um relu
+                # - deixa rodar e fodase
                 erros.append(cond["erro"])
 
         P = (
@@ -539,47 +555,72 @@ class Evaluator:
                 step_sizes.append(inp.get_interval_amplitude() / self.interval_steps)
 
         x_next = [float(inp.curr) for inp in inputs]
+        threads: list[threading.Thread] = []
 
         while True:
             if iter_count > self.max_iter_count:
                 return x_next
             iter_count += 1
-            x_changed = False
+            changes = {inp.key: False for inp in self.inputs}
+            x_new = x_next.copy()
 
-            for inp in inputs:
-                i = inputs.index(inp)
+            for inp in self.inputs:
+                indx = self.inputs.index(inp)
 
-                # # increase so that a convergance is eventually forced
-                # if iter_count > self.limit_iter_count:
-                #     step_sizes[i] = step_sizes[i] * self.limit_variation_factor
+                t = threading.Thread(
+                    target=self.get_new_variations,
+                    args=(indx, x_new, changes, step_sizes[indx]),
+                    daemon=True,
+                )
+                threads.append(t)
+                t.start()
 
-                fx, errors = self.scorer.get_score_from_outfile(x_next)
-                if errors is not None:
-                    print("ERROS!\n", errors)
-                variation = step_sizes[i]
+            for t in threads:
+                t.join()
 
-                # d = f(x) / (x1 - x2)
-                d = fx / -variation
-
-                # if math.fabs(d*step_sizes[i]) < min_variation[i]:
-                #     continue
-                # el
-                print(f"d = {d}")
-                if d > 0:
+            for i in range(len(x_new)):
+                if changes[i]:
                     x_changed = True
-                    nv = x_next[i] + step_sizes[i] * d
-                    print(f"changing '{inputs[i].key}' from {x_next[i]} to {nv}")
-                    x_next[i] = nv
-                else:
-                    x_changed = True
-                    nv = x_next[i] - step_sizes[i] * d
-                    print(f"changing '{inputs[i].key}' from {x_next[i]} to {nv}")
-                    x_next[i] = nv
+                    print(
+                        f"Value {inputs[i].key} changed from {x_next[indx]} to {x_new[indx]}"
+                    )
+                    x_next[indx] = x_new[indx]
 
             if not x_changed:
                 break
 
         return x_next
+
+    def get_new_variations(
+        self,
+        indx: int,
+        inp: list[float],
+        changes: dict[str, bool],
+        variation: float,
+    ) -> tuple[float, bool]:
+        # # increase so that a convergance is eventually forced
+        # if iter_count > self.limit_iter_count:
+        #     step_sizes[indx] = step_sizes[indx] * self.limit_variation_factor
+
+        fx, errors = self.scorer.get_score_from_outfile(inp)
+        if errors is not None:
+            print("ERROS!\n", errors)
+
+        # d = f(x) / (x1 - x2)
+        d = fx / -variation
+
+        # if math.fabs(d*step_sizes[indx]) < min_variation[indx]:
+        #     continue
+        # el
+        print(f"d = {d}")
+        if d > 0:
+            changes[indx] = True
+            nv = inp[indx] + variation * d
+            inp[indx] = nv
+        else:
+            changes[indx] = True
+            nv = inp[indx] - variation * d
+            inp[indx] = nv
 
 
 class EvaluatorAdapter:
@@ -688,6 +729,7 @@ class AppState:
             self.scorer,
         )
 
+
 def test():
     app = AppState()
     app.init_prod()
@@ -699,14 +741,22 @@ def test():
     # no caso seria o flap e asa (basta ver o arquivo dev_files/estrutura_flat_input.json)
     # pra ver como isso afeta o resultado, como teste
 
-    v1 = if2.get_value("children.surfaces.Right_Wing.children.sections.SECTION_3.children.Chord")
-    v2 = if2.get_value("children.surfaces.Right_flap.children.sections.SECTION_3.children.Chord")
+    v1 = if2.get_value(
+        "children.surfaces.Right_Wing.children.sections.SECTION_3.children.Chord"
+    )
+    v2 = if2.get_value(
+        "children.surfaces.Right_flap.children.sections.SECTION_3.children.Chord"
+    )
 
-    v1 = str(float(v1)*2.0)
-    v2 = str(float(v2)*2.0)
+    v1 = str(float(v1) * 2.0)
+    v2 = str(float(v2) * 2.0)
 
-    if2.set_value("children.surfaces.Right_Wing.children.sections.SECTION_3.children.Chord", v1)
-    if2.set_value("children.surfaces.Right_flap.children.sections.SECTION_3.children.Chord", v2)
+    if2.set_value(
+        "children.surfaces.Right_Wing.children.sections.SECTION_3.children.Chord", v1
+    )
+    if2.set_value(
+        "children.surfaces.Right_flap.children.sections.SECTION_3.children.Chord", v2
+    )
 
     f2 = app.avl.analyse(if2)
     f1 = app.avl.analyse(if1)
@@ -716,6 +766,7 @@ def test():
 
     print("score f1 = ", s1)
     print("score f2 = ", s2)
+
 
 def prod():
     app = AppState()
