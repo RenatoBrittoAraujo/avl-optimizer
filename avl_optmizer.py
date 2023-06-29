@@ -783,5 +783,5 @@ def prod():
 
 
 if __name__ == "__main__":
-    # prod()
-    test()
+    prod()
+    # test()
