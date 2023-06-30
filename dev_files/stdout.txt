@@ -27,7 +27,7 @@
    NAME s  Specify new configuration name
 
  AVL   c>  
- Reading file: in_1.avl  ...
+ Reading file: in_0.avl  ...
 
  Configuration: WING_2022                                                   
 
@@ -39,20 +39,38 @@
    Building duplicate image-surface: Right_Wing (YDUP)                       
 
    Building surface: Right_flap                              
+  * Line   70 ignored: Yle
+  * Line   71 ignored: 0.0
      Reading airfoil from file: FLAPNOVO.dat
      Reading airfoil from file: FLAPNOVO.dat
+  * Line   96 ignored: Zle
+  * Line   97 ignored: 0.0
      Reading airfoil from file: FLAPNOVO.dat
   
    Building duplicate image-surface: Right_flap (YDUP)                       
 
    Building surface: emp_horizontal                          
+  * Line  124 ignored: Yle
+  * Line  125 ignored: 0.0
+  * Line  126 ignored: Zle
+  * Line  127 ignored: 0.0
      Reading airfoil from file: eh_NACA3312_inv.dat
+  * Line  140 ignored: Zle
+  * Line  141 ignored: 0.0
      Reading airfoil from file: eh_NACA3312_inv.dat
   
    Building duplicate image-surface: emp_horizontal (YDUP)                   
 
    Building surface: emp_vertical                            
+  * Line  164 ignored: Yle
+  * Line  165 ignored: 0.0
      Reading airfoil from file: ev_BELL540.dat
+  * Line  178 ignored: Xle
+  * Line  179 ignored: 0.0
+  * Line  180 ignored: Yle
+  * Line  181 ignored: 0.0
+  * Line  182 ignored: Zle
+  * Line  183 ignored: 0.0
      Reading airfoil from file: ev_BELL540.dat
 
    Building surface: Fuselage H                              

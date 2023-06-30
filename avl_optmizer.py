@@ -143,6 +143,12 @@ class FileParser:
         if type(obj) == list:
             return obj[int(key)]
         else:
+            if key not in obj:
+                if "\\_" in key:
+                    other_possible = key.replace("\\_", " ")
+                    if other_possible in obj:
+                        return obj[other_possible]
+                raise KeyError
             return obj[key]
 
     def __set(self, obj: any, key: str, val: any):
@@ -173,14 +179,13 @@ class AVLResultParser(FileParser):
 # interact with program itself
 
 
-class AVLInstance:
+class AVL:
     command_list: str
     avl_folder_path: str
     input_file: str
     output_file: str
     overwrite_any: bool
-
-    thread_id: int
+    io_file_indx: int
 
     def __init__(
         self,
@@ -197,36 +202,51 @@ class AVLInstance:
         self.avl_folder_path = avl_folder_path
         self.input_file = input_file
         self.output_file = output_file
-        self.command_list = ""
         self.overwrite_any = overwrite_any
+        self.command_list = ""
+        self.io_file_indx = 0
 
     def add_command(self, cmd: str):
         self.command_list += cmd + "\n"
 
-    def analyse(
-        self,
-        c_tid: int,
-        end_event: threading.Event,
-        in_fp: AVLFileParser,
-        inf: str,
-        ouf: str,
-        results: dict,
-    ) -> AVLResultParser:
-        self.thread_id = c_tid
+    def get_new_id(self) -> int:
+        self.io_file_indx += 1
+        return self.io_file_indx - 1
 
+    def analyse_for_thread(
+        self,
+        thread_id: int,
+        thread_label: str,
+        thread_results: dict,
+        thread_end_event: threading.Event,
+        in_fp: AVLFileParser,
+    ) -> AVLResultParser:
+        nid = self.get_new_id()
+        print(f"[id: {thread_id}, label: {thread_label}, nid: {nid}] thread started")
+        res_fp = self.analyse_from_fp(in_fp, nid=nid)
+        thread_results[thread_id] = res_fp
+        thread_end_event.set()
+        print(f"[id: {thread_id}, label: {thread_label}, nid: {nid}] thread ended")
+        return res_fp
+
+    def analyse_from_fp(self, in_fp: AVLFileParser, nid: int = None) -> AVLResultParser:
+        if nid is None:
+            nid = self.get_new_id()
+        self.command_list = ""
+
+        inf, ouf = self.create_in_out_file(nid)
         write_file(inf, in_fp.parse_into_file())
         delete_file(ouf)
 
-        self.analyse_v1(c_tid, inf, ouf)
+        process = self.analyse_v1(str(nid), inf, ouf)
 
         res_str = read_file(ouf)
         res_fp = AVLResultParser(arquivo=res_str)
+        # delete_file(ouf)
 
-        results[c_tid] = res_fp
+        return res_fp
 
-        end_event.set()
-
-    def analyse_v1(self, c_tid: int, inf: str, ouf: str) -> str:
+    def analyse_v1(self, label: int, inf: str, ouf: str) -> str:
         commands = """
         LOAD {input_file}
         OPER
@@ -242,13 +262,13 @@ class AVLInstance:
             if line:
                 self.add_command(line.strip())
 
-        return self.exec(c_tid)
+        return self.exec(label)
 
-    def exec(self, c_tid: int):
+    def exec(self, label: str):
         if not self.command_list:
             raise Exception("error: no avl commands have been provided")
 
-        print(f"[{c_tid}] running a thread....")
+        print(f"[{label}] running a thread....")
 
         process = subprocess.run(
             ["./avl"],
@@ -261,7 +281,7 @@ class AVLInstance:
         write_file("dev_files/stdout.txt", process.stdout.decode("utf-8"))
         write_file("dev_files/stderr.txt", process.stderr.decode("utf-8"))
 
-        print(f"[{c_tid}] thread ended!")
+        print(f"[{label}] thread ended!")
         err = process.stderr.decode("utf-8")
         err.replace(
             "At line 145 of file ../src/userio.f (unit = 5, file = 'stdin')\nFortran runtime error: End of file\n",
@@ -271,89 +291,73 @@ class AVLInstance:
         # [TODO] parse de erros aqui
         # if err != "":
         #     print("AVL ERROR!")
-        #     print(f"[{c_tid}] stderr: {process.stderr}")
+        #     print(f"[{label}] stderr: {process.stderr}")
 
         return process
 
+    def create_in_out_file(self, nid: int):
+        inp = self.avl_folder_path + self.input_file.replace(".avl", f"_{nid}.avl")
+        out = self.avl_folder_path + self.output_file.replace(".txt", f"_{nid}.txt")
+        return inp, out
 
-class AVL:
-    command_list: str
-    avl_folder_path: str
-    input_file: str
-    output_file: str
-    overwrite_any: bool
+
+class ThreadQueue:
     max_threads: int
-
-    tid: int
-    queue: list[dict[str, any]]
+    last_tid: int
     running_threads: list[dict[str, any]]
-    event: threading.Event
-    results: dict
+    thread_end_event: threading.Event
+    results: dict[int, any]
+    label_map: dict[str, int]
 
     def __init__(
         self,
-        avl_folder_path: str,
-        input_file: str,
-        output_file: str,
         max_threads: int = 1,
-        overwrite_any: bool = False,
     ):
-        self.avl_folder_path = avl_folder_path
-        self.input_file = input_file
-        self.output_file = output_file
-        self.overwrite_any = overwrite_any
         self.max_threads = max_threads
         self.running_threads = []
-        self.tid = 0
-        self.event = threading.Event()
+        self.last_tid = 0
+        self.thread_end_event = threading.Event()
         self.results = {}
+        self.label_map = {}
 
-    def create_in_out_file(self, tid: int):
-        inp = self.avl_folder_path + self.input_file.replace(".avl", f"_{tid}.avl")
-        out = self.avl_folder_path + self.output_file.replace(".txt", f"_{tid}.txt")
-        return inp, out
-
-    def analyse(self, in_fp: AVLFileParser) -> AVLResultParser:
+    def add_new_thread_blocking(
+        self, procedure: any, args: tuple, label: str = None
+    ) -> int:
         self.wait_queue_space_if_any()
-
-        c_tid = self.get_thread_id()
-        inf, ouf = self.create_in_out_file(c_tid)
-
-        print(f"[{c_tid}] sending in dict hashed as = {get_dict_hash(in_fp.__dict__)}")
-        print(f"[{c_tid}] input file for instance = {inf}")
-        print(f"[{c_tid}] output file for instance = {ouf}")
-
-        avl_intance = AVLInstance(
-            avl_folder_path=self.avl_folder_path,
-            input_file=inf,
-            output_file=ouf,
-            overwrite_any=self.overwrite_any,
-        )
-
+        thread_id = self.create_new_thread_id()
+        if label is None:
+            label = str(thread_id)
+        args = (thread_id, label, self.results, self.thread_end_event, *args)
         t = threading.Thread(
-            target=avl_intance.analyse,
-            args=(c_tid, self.event, in_fp, inf, ouf, self.results),
+            target=procedure,
+            args=args,
             daemon=True,
         )
         self.running_threads.append(t)
         t.start()
+        return thread_id, label
 
-        # isso deveria funcionar baseado em eventos de thread terminando
-        # mas ainda não foi implementado
-        t.join()
+    def get_thread_result_blocking(self, thread_label: str):
+        tid = None
+        if thread_label in self.label_map:
+            tid = self.label_map[thread_label]
+        if thread_label.isdigit():
+            tid = int(thread_label)
+        if tid is None or tid >= self.last_tid:
+            print(f"thread_id for label '{thread_label}' not found")
+            raise KeyError
 
-        if c_tid in self.results:
-            print(f"[{c_tid}] output file created for this instance = {ouf}")
-            self.running_threads.remove(t)
-            result = self.results[c_tid]
-            # delete_file(ouf)
-            print(f"[{c_tid}] get result hashed as = {get_dict_hash(result.__dict__)}")
-            del self.results[c_tid]
+        if tid in self.results:
+            result = self.results[tid]
+            del self.results[tid]
             return result
-        else:
-            print(f"ERROR thread {c_tid} has not given any results!!!!")
 
-    def get_thread_id(self) -> int:
+        print(
+            f"thread_id {tid} for label '{thread_label}' has not given set any result"
+        )
+        return None
+
+    def create_new_thread_id(self) -> int:
         c_tid = self.tid
         self.tid += 1
         return c_tid
@@ -361,6 +365,11 @@ class AVL:
     def wait_queue_space_if_any(self):
         if len(self.running_threads) < self.max_threads:
             return
+        self.thread_end_event.wait()
+
+    def wait_all_threads(self):
+        for t in self.running_threads:
+            t.join()
 
 
 class Input:
@@ -404,7 +413,9 @@ class Scorer:
     def set_ev_adapter(self, ev_adapter: "EvaluatorAdapter"):
         self.ev_adatper = ev_adapter
 
-    def get_score_from_outfile(self, fp: AVLResultParser) -> tuple[float, list[str]]:
+    def get_score_from_outfile(
+        self, x: list[float]
+    ) -> tuple[float, list[str], AVLResultParser]:
         raise NotImplementedError
 
     def get_score(
@@ -413,13 +424,15 @@ class Scorer:
         out_fp: AVLResultParser,
         inputs: list[Input],
         outputs: list[Output],
-    ) -> tuple[float, list[str]]:
+    ) -> tuple[float, list[str], AVLResultParser]:
         raise NotImplementedError
 
 
 class SumScorer(Scorer):
     # [TODO] Implementar uma função de score real
-    def get_score_from_outfile(self, x: list[float]) -> tuple[float, list[str]]:
+    def get_score_from_outfile(
+        self, x: list[float]
+    ) -> tuple[float, list[str], AVLResultParser]:
         out_fp, in_fp, inputs, outputs = self.ev_adatper.get_results_from_avl(x)
 
         vals_sum = 0
@@ -427,7 +440,7 @@ class SumScorer(Scorer):
             val = float(out_fp.get_value(out.key))
             vals_sum += val
         print("============== GOT NEW SCORE!!!!", vals_sum)
-        return vals_sum, None
+        return vals_sum, None, out_fp
 
 
 class V1Scorer(Scorer):
@@ -452,12 +465,14 @@ class V1Scorer(Scorer):
         return True
 
     # retorna score e os erros que ocorreram
-    def get_score_from_outfile(self, x: list[float]) -> tuple[float, list[str]]:
+    def get_score_from_outfile(
+        self, x: list[float]
+    ) -> tuple[float, list[str], AVLResultParser]:
         # print("feeding avl this: ...")
         # print(self.ev_adatper.get_avl_file_from_inputs(x).structure)
 
         out_fp, in_fp, inputs, outputs = self.ev_adatper.get_results_from_avl(x)
-        return self._score(in_fp, out_fp, inputs, outputs)
+        return self.get_score(in_fp, out_fp, inputs, outputs)
 
     def get_score(
         self,
@@ -465,7 +480,7 @@ class V1Scorer(Scorer):
         out_fp: AVLResultParser,
         inputs: list[Input],
         outputs: list[Output],
-    ) -> tuple[float, list[str]]:
+    ) -> tuple[float, list[str], AVLResultParser]:
         # [TODO] NOTA: Não tem garantias e limites de tamanho!
         # - to fazendo
         # - limitado direito no input
@@ -515,7 +530,7 @@ class V1Scorer(Scorer):
         )
 
         print("============== GOT NEW SCORE!!!!", P)
-        return P, erros
+        return P, erros, out_fp
 
 
 class Evaluator:
@@ -525,6 +540,9 @@ class Evaluator:
     interval_steps: int
     score_precision: float
     scorer: Scorer
+    empty_changeset: dict
+    thread_queue: ThreadQueue
+    avl: AVL
 
     def __init__(
         self,
@@ -534,6 +552,8 @@ class Evaluator:
         interval_steps: int,
         score_precision: float,
         scorer: Scorer,
+        thread_queue: ThreadQueue,
+        avl: AVL,
     ):
         self.max_iter_count = max_iter_count
         self.limit_iter_count = limit_iter_count
@@ -541,6 +561,9 @@ class Evaluator:
         self.interval_steps = interval_steps
         self.score_precision = score_precision
         self.scorer = scorer
+        self.empty_changeset = {"changed": False, "out_fp": None}
+        self.thread_queue = thread_queue
+        self.avl = avl
 
     # Implementation of Newton-Raphson method
     # https://en.wikipedia.org/wiki/Newton%27s_method
@@ -555,54 +578,73 @@ class Evaluator:
                 step_sizes.append(inp.get_interval_amplitude() / self.interval_steps)
 
         x_next = [float(inp.curr) for inp in inputs]
-        threads: list[threading.Thread] = []
+
+        print("[main] Getting initial out file...")
+        self.
+        self.avl.analyse_from_fp()
+        _, _, init_out_fp = self.scorer.get_score_from_outfile(x_next)
 
         while True:
             if iter_count > self.max_iter_count:
                 return x_next
             iter_count += 1
-            changes = {inp.key: False for inp in self.inputs}
             x_new = x_next.copy()
+            x_out_changes = False
+            x_inp_changes = False
 
-            for inp in self.inputs:
-                indx = self.inputs.index(inp)
+            print(f"[main]  CREATING {len(inputs)} NEW THREADS")
 
-                t = threading.Thread(
-                    target=self.get_new_variations,
-                    args=(indx, x_new, changes, step_sizes[indx]),
-                    daemon=True,
+            for inp in inputs:
+                indx = inputs.index(inp)
+
+                self.thread_queue.add_new_thread_blocking(
+                    self.get_new_variations,
+                    (x_new, step_sizes[indx]),
+                    label=int(indx),
                 )
-                threads.append(t)
-                t.start()
 
-            for t in threads:
-                t.join()
+            self.thread_queue.wait_all_threads()
 
             for i in range(len(x_new)):
-                if changes[i]:
-                    x_changed = True
+                if x_next[i] != x_new[i]:
                     print(
-                        f"Value {inputs[i].key} changed from {x_next[indx]} to {x_new[indx]}"
+                        f"Changed the input {inputs[i].key} in x_next versus x_new from {x_next[i]} to {x_new[i]}"
                     )
-                    x_next[indx] = x_new[indx]
+                    x_inp_changes = True
 
-            if not x_changed:
+                out_fp = self.thread_queue.get_thread_result_blocking(int(i))
+
+                if out_fp is None:
+                    print("out_fp is None!")
+                    continue
+
+                max_err = 1e-6
+                for key, orig_val in init_out_fp.flatten().items():
+                    res_val = float(out_fp.get_value(key))
+                    orig_val = float(orig_val)
+                    if math.fabs(res_val - orig_val) > max_err:
+                        x_out_changes = True
+                        print(f"[main] the attribute '{key}' is changed")
+                        print(f"[main] intial value is: {orig_val}")
+                        print(f"[main] new value is:    {res_val}")
+
+            if not x_out_changes and not x_inp_changes:
+                print("no changes detecting, ending the evalutor")
                 break
 
         return x_next
 
     def get_new_variations(
         self,
-        indx: int,
+        indx:int,
         inp: list[float],
-        changes: dict[str, bool],
         variation: float,
     ) -> tuple[float, bool]:
         # # increase so that a convergance is eventually forced
         # if iter_count > self.limit_iter_count:
         #     step_sizes[indx] = step_sizes[indx] * self.limit_variation_factor
 
-        fx, errors = self.scorer.get_score_from_outfile(inp)
+        fx, errors, out_fp = self.scorer.get_score_from_outfile(inp)
         if errors is not None:
             print("ERROS!\n", errors)
 
@@ -614,13 +656,13 @@ class Evaluator:
         # el
         print(f"d = {d}")
         if d > 0:
-            changes[indx] = True
             nv = inp[indx] + variation * d
             inp[indx] = nv
         else:
-            changes[indx] = True
             nv = inp[indx] - variation * d
             inp[indx] = nv
+
+        return out_fp
 
 
 class EvaluatorAdapter:
@@ -632,14 +674,12 @@ class EvaluatorAdapter:
         input_file: AVLFileParser,
         inputs: list[Input],
         outputs: list[Output],
-        evaluator: Evaluator,
         scorer: Scorer,
     ):
         self.avl = avl
         self.input_file = input_file
         self.inputs = inputs
         self.outputs = outputs
-        self.evaluator = evaluator
         self.in_fp_base = input_file
         self.scorer = scorer
         self.res_memo = {}
@@ -685,6 +725,7 @@ class AppState:
     scorer: Scorer
     evaluator: Evaluator
     evaluator_adapter: EvaluatorAdapter
+    avl_thread_queue: ThreadQueue
 
     def __init__(self):
         pass
@@ -694,11 +735,12 @@ class AppState:
 
         self.input_fp = AVLFileParser(arquivo=read_file(self.cfg["base_input_file"]))
 
+        self.avl_thread_queue = ThreadQueue(max_threads=self.cfg["max_threads"])
+
         self.avl = AVL(
             self.cfg["avl_env_path"],
             input_file=self.cfg["avl_input_file"],
             output_file=self.cfg["avl_output_file"],
-            max_threads=1,
             overwrite_any=True,
         )
 
@@ -711,6 +753,14 @@ class AppState:
 
         self.scorer = V1Scorer()
 
+        self.evaluator_adapter = EvaluatorAdapter(
+            self.avl,
+            self.input_fp,
+            self.inputs,
+            self.outputs,
+            self.scorer,
+        )
+
         self.evaluator = Evaluator(
             max_iter_count=self.cfg["max_iter_count"],
             limit_iter_count=self.cfg["limit_iter_count"],
@@ -718,16 +768,11 @@ class AppState:
             interval_steps=self.cfg["interval_steps"],
             score_precision=self.cfg["score_precision"],
             scorer=self.scorer,
+            thread_queue=self.avl_thread_queue,
+            avl=self.avl,
         )
 
-        self.evaluator_adapter = EvaluatorAdapter(
-            self.avl,
-            self.input_fp,
-            self.inputs,
-            self.outputs,
-            self.evaluator,
-            self.scorer,
-        )
+
 
 
 def test():
@@ -772,13 +817,14 @@ def prod():
     app = AppState()
     app.init_prod()
 
-    out_avl_fp, out_analysis_fp = app.evaluator_adapter.optimize()
+    out_avl_fp, out_analysis = app.evaluator_adapter.optimize()
+    out_fp, in_fp, inputs, outputs = out_analysis
 
     write_file(app.cfg["final_input_file"], out_avl_fp.parse_into_file())
 
     write_file(
         app.cfg["avl_env_path"] + app.cfg["avl_output_file"],
-        out_analysis_fp.parse_into_file(),
+        out_fp.parse_into_file(),
     )
 
 

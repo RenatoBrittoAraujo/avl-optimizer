@@ -43,7 +43,7 @@ CLAF
 #---------------
 SECTION
 #Xle Yle Zle Chord Ainc Nspanwise Sspace
-0.000 0.7365 0.0 0.42 0.0 0 0
+0.000 0.7365 0.0 0.2100 0.0 0 0
 AFILE
 w_NACA4412.dat 
 CLAF
@@ -67,6 +67,8 @@ TRANSLATE
 SECTION
 #Xle Yle Zle Chord Ainc Nspanwise Sspace
 0.254 0.0 -0.005 0.05 0.0 0 0
+Yle
+0.0 
 AFILE
 FLAPNOVO.dat 
 #---------------
@@ -90,7 +92,9 @@ flaperon 1.0 0.0 0.0 1.0 0.0 -1.0
 #---------------
 SECTION
 #Xle Yle Zle Chord Ainc Nspanwise Sspace
-0.2140 0.7365 0.0 0.1 0.0 0 0
+0.214 0.7365 0.0 0.05 0.0 0 0
+Zle
+0.0 
 AFILE
 FLAPNOVO.dat 
 #---------------
@@ -116,7 +120,11 @@ TRANSLATE
 #---------------
 SECTION
 #Xle Yle Zle Chord Ainc
--0.05 0.0 0 0.20 0.0
+-0.05 0.0 0.0 0.2 0.0
+Yle
+0.0 
+Zle
+0.0 
 AFILE
 eh_NACA3312_inv.dat 
 #---------------
@@ -128,7 +136,9 @@ elevator 1.0 0.60 0.0 1.0 0.0 +1
 #---------------
 SECTION
 #Xle Yle Zle Chord Ainc
--0.05 0.2455 0 0.20 0.0
+-0.05 0.2455 0.0 0.2 0.0
+Zle
+0.0 
 AFILE
 eh_NACA3312_inv.dat 
 #---------------
@@ -150,7 +160,9 @@ TRANSLATE
 #---------------
 SECTION
 #Xle Yle Zle Chord Ainc
-0.09 0 0.21 0.095 0.0
+0.09 0.0 0.21 0.095 0.0
+Yle
+0.0 
 AFILE
 ev_BELL540.dat 
 #---------------
@@ -162,7 +174,13 @@ rudder 1.0 0.50 0.0 0.0 1.0
 #---------------
 SECTION
 #Xle Yle Zle Chord Ainc
-0 0 0 0.193 0.0
+0.0 0.0 0.0 0.193 0.0
+Xle
+0.0 
+Yle
+0.0 
+Zle
+0.0 
 AFILE
 ev_BELL540.dat 
 #---------------
