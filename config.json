@@ -1,7 +1,7 @@
 {
   "avl_env_path": "env/",
   "avl_input_file": "in.avl",
-  "avl_output_file": "out.txt",
+  "avl_output_file": "baseline_out.txt",
   "base_input_file": "geometria.avl",
   "final_input_file": "otimizado.avl",
   "final_output_file": "output.txt",
