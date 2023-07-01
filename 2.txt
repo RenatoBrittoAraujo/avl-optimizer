@@ -1,4 +1,0 @@
-[0] sending in dict hashed as = d80540db9ef9857a293d48e2b0e61ae4
-[0] input file for instance = env/in_0.avl
-[0] output file for instance = env/out_0.txt
-[0] running a thread....

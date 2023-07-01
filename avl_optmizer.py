@@ -6,7 +6,7 @@ import math
 import threading
 import hashlib
 import json
-
+import time
 
 from avl_parse_util import (
     parse_avl_file,
@@ -57,9 +57,9 @@ def read_json(file):
 
 def delete_file(target):
     try:
-        subprocess.call(["rm", target])
+        subprocess.call(["rm", "-f", target])
     except Exception as e:
-        print("ERROR! tried to delete file", target, "but failed because", e)
+        # print("ERROR! tried to delete file", target, "but failed because", e)
         pass
 
 
@@ -229,11 +229,12 @@ class AVL:
             nid = self.get_new_id()
 
         inf, ouf = self.create_in_out_file(nid)
-        write_file(inf, in_fp.parse_into_file())
+        delete_file(inf)
         delete_file(ouf)
+        write_file(inf, in_fp.parse_into_file())
 
         process = self.analyse_v1(str(nid), inf, ouf)
-        print(f"process out: {process.stdout.decode('utf-8')}")
+        # print(f"process out: {process.stdout.decode('utf-8')}")
 
         res_str = read_file(ouf)
         res_fp = AVLResultParser(arquivo=res_str)
@@ -253,6 +254,7 @@ class AVL:
         )
         command_list = ""
         for line in commands.split("\n"):
+            line = line.strip()
             if line:
                 command_list += line + "\n"
 
@@ -261,8 +263,6 @@ class AVL:
     def exec(self, label: str, command_list: str) -> subprocess.CompletedProcess:
         if not command_list:
             raise Exception("error: no avl commands have been provided")
-
-        print(f"[{label}] running a thread....")
 
         process = subprocess.run(
             ["./avl"],
@@ -275,7 +275,6 @@ class AVL:
         write_file("dev_files/stdout.txt", process.stdout.decode("utf-8"))
         write_file("dev_files/stderr.txt", process.stderr.decode("utf-8"))
 
-        print(f"[{label}] thread ended!")
         err = process.stderr.decode("utf-8")
         err.replace(
             "At line 145 of file ../src/userio.f (unit = 5, file = 'stdin')\nFortran runtime error: End of file\n",
@@ -298,37 +297,59 @@ class AVL:
 class ThreadQueue:
     max_threads: int
     last_tid: int
-    running_threads: list[dict[str, any]]
+    running_threads: dict[int, threading.Thread]
     thread_end_event: threading.Event
     results: dict[int, any]
     label_map: dict[str, int]
+    thread_create_semaphore: threading.Semaphore
+    thread_list_semaphore: threading.Semaphore
+    thread_create_queue: threading.Semaphore
 
     def __init__(
         self,
         max_threads: int = 1,
     ):
         self.max_threads = max_threads
-        self.running_threads = []
+        self.running_threads = {}
         self.last_tid = 0
         self.thread_end_event = threading.Event()
         self.results = {}
         self.label_map = {}
+        self.thread_create_queue = threading.Semaphore(max_threads)
+        self.thread_list_semaphore = threading.Semaphore(1)
+
+        threading.Thread(
+            target=self.check_running_threads,
+            daemon=True,
+        ).start()
+
+    def add_thread_to_list(self, thread_id: int, t: threading.Thread):
+        self.thread_list_semaphore.acquire()
+        self.running_threads[thread_id] = t
+        self.thread_list_semaphore.release()
+
+    def remove_thread_to_list(self, thread_id: int):
+        self.thread_list_semaphore.acquire()
+        del self.running_threads[thread_id]
+        self.thread_list_semaphore.release()
 
     def add_new_thread_blocking(
         self, procedure: any, args: tuple, label: str = None
     ) -> int:
-        self.wait_queue_space_if_any()
+        self.thread_create_queue.acquire()
         thread_id = self.create_new_thread_id()
         if label is None:
             label = str(thread_id)
+        if label in self.label_map:
+            raise Exception(f"label '{label}' already exists")
         args = (thread_id, label, self.results, self.thread_end_event, *args)
         t = threading.Thread(
             target=procedure,
             args=args,
             daemon=True,
         )
-        self.running_threads.append(t)
         t.start()
+        self.add_thread_to_list(thread_id, t)
         return thread_id, label
 
     def get_thread_result_blocking(self, thread_label: str):
@@ -341,9 +362,15 @@ class ThreadQueue:
             print(f"thread_id for label '{thread_label}' not found")
             raise KeyError
 
+        # blocks till thread is done
+        if tid in self.running_threads:
+            self.running_threads[tid].join()
+
         if tid in self.results:
             result = self.results[tid]
             del self.results[tid]
+            if tid not in self.running_threads:
+                del self.label_map[tid]
             return result
 
         print(
@@ -355,14 +382,27 @@ class ThreadQueue:
         self.last_tid += 1
         return self.last_tid - 1
 
-    def wait_queue_space_if_any(self):
-        if len(self.running_threads) < self.max_threads:
-            return
-        self.thread_end_event.wait()
-
     def wait_all_threads(self):
-        for t in self.running_threads:
-            t.join()
+        keys = list(self.running_threads.keys()).copy()
+        while len(keys) > 0:
+            tid = keys.pop()
+            self.running_threads[tid].join()
+
+    # a thread to remove running threads
+    def check_running_threads(self):
+        while True:
+            self.thread_list_semaphore.acquire()
+            keys = list(self.running_threads.keys()).copy()
+            for tid in keys:
+                if tid not in self.running_threads:
+                    continue
+                if not self.running_threads[tid].is_alive():
+                    self.thread_create_queue.release()
+                    del self.running_threads[tid]
+                    if tid not in self.results:
+                        del self.label_map[tid]
+            self.thread_list_semaphore.release()
+            time.sleep(0.1)
 
 
 class Input:
@@ -577,6 +617,8 @@ class Evaluator:
             _, _, init_out_fp = self.get_score_from_scorer(in_fp, out_fp)
             write_file(self.output_file_loc, init_out_fp.parse_into_file())
 
+        last_out_fp = None
+
         while True:
             if iter_count > self.max_iter_count:
                 return x_next
@@ -590,13 +632,13 @@ class Evaluator:
             for inp in self.inputs:
                 indx = self.inputs.index(inp)
 
-                self.thread_queue.add_new_thread_blocking(
-                    self.avl.analyse_for_thread,
-                    (in_fp,),
-                    label=int(indx),
-                )
+            #     self.thread_queue.add_new_thread_blocking(
+            #         self.avl.analyse_for_thread,
+            #         (in_fp,),
+            #         label=int(indx),
+            #     )
 
-            self.thread_queue.wait_all_threads()
+            # self.thread_queue.wait_all_threads()
 
             for i in range(len(x_new)):
                 if x_next[i] != x_new[i]:
@@ -605,7 +647,9 @@ class Evaluator:
                     )
                     x_inp_changes = True
 
-                out_fp = self.thread_queue.get_thread_result_blocking(int(i))
+                # out_fp = self.thread_queue.get_thread_result_blocking(int(i))
+                out_fp = self.output_file
+                last_out_fp = out_fp
 
                 if out_fp is None:
                     print("out_fp is None!")
@@ -625,7 +669,7 @@ class Evaluator:
                 print("no changes detecting, ending the evalutor")
                 break
 
-        return x_next
+        return self.get_in_fp_from_vals(x_next), out_fp
 
     def get_new_variations(
         self,
@@ -780,14 +824,13 @@ def prod():
     app = AppState()
     app.init_prod()
 
-    out_avl_fp, out_analysis = app.evaluator.optimize(app.input_fp)
-    out_fp, in_fp, inputs, outputs = out_analysis
+    end_in_fp, end_out_fp = app.evaluator.optimize(app.input_fp)
 
-    write_file(app.cfg["final_input_file"], out_avl_fp.parse_into_file())
+    write_file(app.cfg["final_input_file"], end_in_fp.parse_into_file())
 
     write_file(
         app.cfg["avl_env_path"] + app.cfg["avl_output_file"],
-        out_fp.parse_into_file(),
+        end_out_fp.parse_into_file(),
     )
 
 
