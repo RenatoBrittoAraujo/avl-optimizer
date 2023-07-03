@@ -27,23 +27,23 @@
    NAME s  Specify new configuration name
 
  AVL   c>  
- Reading file: in_26.avl  ...
+ Reading file: in_0.avl  ...
 
  Configuration: WING_2022                                                   
 
    Building surface: Right_Wing                              
-     Reading airfoil from file: w_NACA4412.dat
-     Reading airfoil from file: w_NACA4412.dat
-     Reading airfoil from file: w_NACA4412.dat
+     Reading airfoil from file: MMT19012-10.dat
+
+ File OPEN error:  MMT19012-10.dat  
+ **   Airfoil file not found  : MMT19012-10.dat
+ **   Using default zero-camber airfoil
+     Reading airfoil from file: MMT19012-10.dat
+
+ File OPEN error:  MMT19012-10.dat  
+ **   Airfoil file not found  : MMT19012-10.dat
+ **   Using default zero-camber airfoil
   
    Building duplicate image-surface: Right_Wing (YDUP)                       
-
-   Building surface: Right_flap                              
-     Reading airfoil from file: FLAPNOVO.dat
-     Reading airfoil from file: FLAPNOVO.dat
-     Reading airfoil from file: FLAPNOVO.dat
-  
-   Building duplicate image-surface: Right_flap (YDUP)                       
 
    Building surface: emp_horizontal                          
      Reading airfoil from file: eh_NACA3312_inv.dat
@@ -64,9 +64,9 @@
  Mach =    0.0000  (default)
 
     0 Bodies
-   10 Solid surfaces
-  147 Strips
- 2456 Vortices
+    8 Solid surfaces
+  103 Strips
+ 2060 Vortices
 
     3 Control variables
     0 Design parameters
@@ -84,7 +84,7 @@
   R oll  rate   ->  pb/2V       =   0.000         
   P itch rate   ->  qc/2V       =   0.000         
   Y aw   rate   ->  rb/2V       =   0.000         
-  D1  flaperon  ->  flaperon    =   0.000         
+  D1  aileron   ->  aileron     =   0.000         
   D2  elevator  ->  elevator    =   0.000         
   D3  rudder    ->  rudder      =   0.000         
   ------------      ------------------------
@@ -117,18 +117,18 @@
   Building source+doublet velocity AIC matrix...
   Building bound-vortex velocity matrix...
 
- iter d(alpha)   d(beta)    d(pb/2V)   d(qc/2V)   d(rb/2V)   flaperon   elevator   rudder     
+ iter d(alpha)   d(beta)    d(pb/2V)   d(qc/2V)   d(rb/2V)   aileron    elevator   rudder     
    1 -0.000E+00 -0.000E+00  0.000E+00 -0.000E+00  0.000E+00 -0.000E+00 -0.000E+00 -0.000E+00
  ---------------------------------------------------------------
  Vortex Lattice Output -- Total Forces
 
  Configuration: WING_2022                                                   
-     # Surfaces =  10
-     # Strips   = 147
-     # Vortices =2456
+     # Surfaces =   8
+     # Strips   = 103
+     # Vortices =2060
 
-  Sref = 0.39034       Cref = 0.28100       Bref =  1.4730    
-  Xref =  0.0000       Yref =  0.0000       Zref =-0.70000E-01
+  Sref = 0.39000       Cref = 0.23200       Bref =  1.6700    
+  Xref =  0.0000       Yref =  0.0000       Zref =  0.0000    
 
  Standard axis orientation,  X fwd, Z down         
 
@@ -138,17 +138,17 @@
   Beta  =   0.00000     qc/2V =   0.00000
   Mach  =     0.000     rb/2V =  -0.00000     r'b/2V =  -0.00000
 
-  CXtot =  -0.01979     Cltot =  -0.00000     Cl'tot =  -0.00000
-  CYtot =   0.00000     Cmtot =   0.19341
-  CZtot =  -0.47811     Cntot =  -0.00000     Cn'tot =  -0.00000
+  CXtot =  -0.00304     Cltot =   0.00000     Cl'tot =   0.00000
+  CYtot =   0.00000     Cmtot =   0.26191
+  CZtot =   0.08174     Cntot =  -0.00000     Cn'tot =  -0.00000
 
-  CLtot =   0.47811
-  CDtot =   0.01979
-  CDvis =   0.00000     CDind = 0.0197947
-  CLff  =   0.47797     CDff  = 0.0221800    | Trefftz
-  CYff  =   0.00000         e =    0.5898    | Plane  
+  CLtot =  -0.08174
+  CDtot =   0.00304
+  CDvis =   0.00000     CDind = 0.0030421
+  CLff  =  -0.08174     CDff  = 0.0030431    | Trefftz
+  CYff  =   0.00000         e =    0.0977    | Plane  
 
-   flaperon        =   0.00000
+   aileron         =   0.00000
    elevator        =   0.00000
    rudder          =   0.00000
 
@@ -164,7 +164,7 @@
   R oll  rate   ->  pb/2V       =   0.000         
   P itch rate   ->  qc/2V       =   0.000         
   Y aw   rate   ->  rb/2V       =   0.000         
-  D1  flaperon  ->  flaperon    =   0.000         
+  D1  aileron   ->  aileron     =   0.000         
   D2  elevator  ->  elevator    =   0.000         
   D3  rudder    ->  rudder      =   0.000         
   ------------      ------------------------
@@ -203,7 +203,7 @@ Enter filename, or <return> for screen output   s>
   R oll  rate   ->  pb/2V       =   0.000         
   P itch rate   ->  qc/2V       =   0.000         
   Y aw   rate   ->  rb/2V       =   0.000         
-  D1  flaperon  ->  flaperon    =   0.000         
+  D1  aileron   ->  aileron     =   0.000         
   D2  elevator  ->  elevator    =   0.000         
   D3  rudder    ->  rudder      =   0.000         
   ------------      ------------------------

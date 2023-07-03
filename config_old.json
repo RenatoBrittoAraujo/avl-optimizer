@@ -1,0 +1,228 @@
+{
+  "avl_env_path": "env/",
+  "avl_input_file": "in.avl",
+  "avl_output_file": "baseline_out.txt",
+  "base_input_file": "geometria.avl",
+  "final_input_file": "otimizado.avl",
+  "final_output_file": "output.txt",
+  "templates_folder": "templates/",
+  "max_threads": 9,
+  "max_iter_count": 200,
+  "limit_iter_count": 100,
+  "limit_variation_factor": 0.95,
+  "interval_steps": 100,
+  "score_precision": 0.001,
+  "inputs": {
+    "children.surfaces.emp_horizontal.children.YDUPLICATE": {
+      "interval": [0, 1],
+      "min_variation": 1
+    },
+    "children.surfaces.emp_horizontal.children.ANGLE": {
+      "interval": [0, 100.0]
+    },
+    "children.surfaces.emp_horizontal.children.TRANSLATE.0": {
+      "interval": [0, 100.0]
+    },
+    "children.surfaces.emp_horizontal.children.TRANSLATE.1": {
+      "interval": [0, 100.0]
+    },
+    "children.surfaces.emp_horizontal.children.TRANSLATE.2": {
+      "interval": [0, 100.0]
+    },
+    "children.surfaces.emp_horizontal.children.sections.SECTION_1.children.Xle": {
+      "interval": [0, 100.0]
+    },
+    "children.surfaces.emp_horizontal.children.sections.SECTION_1.children.Yle": {
+      "interval": [0, 100.0]
+    },
+    "children.surfaces.emp_horizontal.children.sections.SECTION_1.children.Zle": {
+      "interval": [0, 100.0]
+    },
+    "children.surfaces.emp_horizontal.children.sections.SECTION_1.children.Chord": {
+      "interval": [0, 100.0]
+    },
+    "children.surfaces.emp_horizontal.children.sections.SECTION_2.children.Xle": {
+      "interval": [0, 100.0]
+    },
+    "children.surfaces.emp_horizontal.children.sections.SECTION_2.children.Yle": {
+      "interval": [0, 100.0]
+    },
+    "children.surfaces.emp_horizontal.children.sections.SECTION_2.children.Zle": {
+      "interval": [0, 100.0]
+    },
+    "children.surfaces.emp_horizontal.children.sections.SECTION_2.children.Chord": {
+      "interval": [0, 100.0]
+    },
+    "children.surfaces.emp_vertical.children.TRANSLATE.0": {
+      "interval": [0, 100.0]
+    },
+    "children.surfaces.emp_vertical.children.TRANSLATE.1": {
+      "interval": [0, 100.0]
+    },
+    "children.surfaces.emp_vertical.children.TRANSLATE.2": {
+      "interval": [0, 100.0]
+    },
+    "children.surfaces.emp_vertical.children.sections.SECTION_1.children.Xle": {
+      "interval": [0, 100.0]
+    },
+    "children.surfaces.emp_vertical.children.sections.SECTION_1.children.Yle": {
+      "interval": [0, 100.0]
+    },
+    "children.surfaces.emp_vertical.children.sections.SECTION_1.children.Zle": {
+      "interval": [0, 100.0]
+    },
+    "children.surfaces.emp_vertical.children.sections.SECTION_1.children.Chord": {
+      "interval": [0, 100.0]
+    },
+    "children.surfaces.emp_vertical.children.sections.SECTION_2.children.Xle": {
+      "interval": [0, 100.0]
+    },
+    "children.surfaces.emp_vertical.children.sections.SECTION_2.children.Yle": {
+      "interval": [0, 100.0]
+    },
+    "children.surfaces.emp_vertical.children.sections.SECTION_2.children.Zle": {
+      "interval": [0, 100.0]
+    },
+    "children.surfaces.emp_vertical.children.sections.SECTION_2.children.Chord": {
+      "interval": [0, 100.0]
+    },
+    "children.surfaces.Right_flap.children.YDUPLICATE": {
+      "interval": [0, 100.0],
+      "min_variation": 1
+    },
+    "children.surfaces.Right_flap.children.ANGLE": {
+      "interval": [0, 100.0]
+    },
+    "children.surfaces.Right_flap.children.TRANSLATE.0": {
+      "interval": [0, 100.0]
+    },
+    "children.surfaces.Right_flap.children.TRANSLATE.1": {
+      "interval": [0, 100.0]
+    },
+    "children.surfaces.Right_flap.children.TRANSLATE.2": {
+      "interval": [0, 100.0]
+    },
+    "children.surfaces.Right_flap.children.sections.SECTION_1.children.Xle": {
+      "interval": [0, 100.0]
+    },
+    "children.surfaces.Right_flap.children.sections.SECTION_1.children.Yle": {
+      "interval": [0, 100.0]
+    },
+    "children.surfaces.Right_flap.children.sections.SECTION_1.children.Zle": {
+      "interval": [0, 100.0]
+    },
+    "children.surfaces.Right_flap.children.sections.SECTION_1.children.Chord": {
+      "interval": [0, 100.0]
+    },
+    "children.surfaces.Right_flap.children.sections.SECTION_2.children.Xle": {
+      "interval": [0, 100.0]
+    },
+    "children.surfaces.Right_flap.children.sections.SECTION_2.children.Yle": {
+      "interval": [0, 100.0]
+    },
+    "children.surfaces.Right_flap.children.sections.SECTION_2.children.Zle": {
+      "interval": [0, 100.0]
+    },
+    "children.surfaces.Right_flap.children.sections.SECTION_2.children.Chord": {
+      "interval": [0, 100.0]
+    },
+    "children.surfaces.Right_flap.children.sections.SECTION_3.children.Xle": {
+      "interval": [0, 100.0]
+    },
+    "children.surfaces.Right_flap.children.sections.SECTION_3.children.Yle": {
+      "interval": [0, 100.0]
+    },
+    "children.surfaces.Right_flap.children.sections.SECTION_3.children.Zle": {
+      "interval": [0, 100.0]
+    },
+    "children.surfaces.Right_flap.children.sections.SECTION_3.children.Chord": {
+      "interval": [0, 100.0]
+    }
+  },
+  "outputs": {
+    "Surfaces": {},
+    "Strips": {},
+    "Vortices": {},
+    "Sref": {},
+    "Cref": {},
+    "Bref": {},
+    "Xref": {},
+    "Yref": {},
+    "Zref": {},
+    "Alpha": {},
+    "pb/2V": {},
+    "p'b/2V": {},
+    "Beta": {},
+    "qc/2V": {},
+    "Mach": {},
+    "rb/2V": {},
+    "r'b/2V": {},
+    "CXtot": {},
+    "Cltot": {},
+    "Cl'tot": {},
+    "CYtot": {},
+    "Cmtot": {},
+    "CZtot": {},
+    "Cntot": {},
+    "Cn'tot": {},
+    "CLtot": {},
+    "CDtot": {},
+    "CDvis": {},
+    "CDind": {},
+    "CLff": {},
+    "CDff": {},
+    "CYff": {},
+    "e": {},
+    "flaperon": {},
+    "elevator": {},
+    "rudder": {},
+    "CLa": {},
+    "CLb": {},
+    "CYa": {},
+    "CYb": {},
+    "Cla": {},
+    "Clb": {},
+    "Cma": {},
+    "Cmb": {},
+    "Cna": {},
+    "Cnb": {},
+    "CLp": {},
+    "CLq": {},
+    "CLr": {},
+    "CYp": {},
+    "CYq": {},
+    "CYr": {},
+    "Clp": {},
+    "Clq": {},
+    "Clr": {},
+    "Cmp": {},
+    "Cmq": {},
+    "Cmr": {},
+    "Cnp": {},
+    "Cnq": {},
+    "Cnr": {},
+    "CLd01": {},
+    "CLd02": {},
+    "CLd03": {},
+    "CYd01": {},
+    "CYd02": {},
+    "CYd03": {},
+    "Cld01": {},
+    "Cld02": {},
+    "Cld03": {},
+    "Cmd01": {},
+    "Cmd02": {},
+    "Cmd03": {},
+    "Cnd01": {},
+    "Cnd02": {},
+    "Cnd03": {},
+    "CDffd01": {},
+    "CDffd02": {},
+    "CDffd03": {},
+    "ed01": {},
+    "ed02": {},
+    "ed03": {},
+    "Neutral point Xnp": {},
+    "Clb Cnr / Clr Cnb": {}
+  }
+}

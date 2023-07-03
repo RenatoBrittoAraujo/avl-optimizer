@@ -632,13 +632,13 @@ class Evaluator:
             for inp in self.inputs:
                 indx = self.inputs.index(inp)
 
-            #     self.thread_queue.add_new_thread_blocking(
-            #         self.avl.analyse_for_thread,
-            #         (in_fp,),
-            #         label=int(indx),
-            #     )
+                self.thread_queue.add_new_thread_blocking(
+                    self.avl.analyse_for_thread,
+                    (in_fp,),
+                    label=int(indx),
+                )
 
-            # self.thread_queue.wait_all_threads()
+            self.thread_queue.wait_all_threads()
 
             for i in range(len(x_new)):
                 if x_next[i] != x_new[i]:
@@ -647,8 +647,8 @@ class Evaluator:
                     )
                     x_inp_changes = True
 
-                # out_fp = self.thread_queue.get_thread_result_blocking(int(i))
-                out_fp = self.output_file
+                out_fp = self.thread_queue.get_thread_result_blocking(str(i))
+                # out_fp = self.output_file
                 last_out_fp = out_fp
 
                 if out_fp is None:
@@ -656,7 +656,9 @@ class Evaluator:
                     continue
 
                 max_err = 1e-6
-                for key, orig_val in init_out_fp.flatten().items():
+                flt = init_out_fp.flatten()
+                items = flt.items()
+                for key, orig_val in items:
                     res_val = float(out_fp.get_value(key))
                     orig_val = float(orig_val)
                     if math.fabs(res_val - orig_val) > max_err:
@@ -669,7 +671,7 @@ class Evaluator:
                 print("no changes detecting, ending the evalutor")
                 break
 
-        return self.get_in_fp_from_vals(x_next), out_fp
+        return self.get_in_fp_from_vals(x_next), last_out_fp
 
     def get_new_variations(
         self,
@@ -782,6 +784,13 @@ class AppState:
         )
 
 
+def keys():
+    app = AppState()
+    app.init_prod()
+    print(app.input_fp)
+    print(json.dumps(app.input_fp.flatten(), indent=4))
+
+
 def test():
     app = AppState()
     app.init_prod()
@@ -835,5 +844,6 @@ def prod():
 
 
 if __name__ == "__main__":
-    prod()
+    # prod()
     # test()
+    keys()

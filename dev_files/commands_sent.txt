@@ -1,5 +1,5 @@
-LOAD in_26.avl
+LOAD in_0.avl
 OPER
 X
 ST
-out_26.txt
+out_0.txt

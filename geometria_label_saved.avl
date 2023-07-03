@@ -18,7 +18,7 @@ WING_2022
 #------------------------------------------------------------------------------------------    
 SURFACE     
 Right_Wing     
-#Nchordwise  Cspace    Nspanwise  Sspace
+#Nchordwise  Cspace    Nspanwise  Sspace    
 19           1.0       22         1.0    
 #COMPONENT     
 #1    
@@ -72,8 +72,11 @@ TRANSLATE
 0.76   0.0   0.11
 #------------------------------------------------------------------------------------------
 SECTION
+# CHORD NAS MSG
+# Xle, Zle fazem um circulo (talvez pensa no translate)
+# aind
 #Xle        Yle    Zle     Chord     Ainc
--0.05 $       0.0    0 $       0.20 $   0.0 $
+-0.05 $[]       0.0    0  $[-10,10]     0.20$   0.0 $[-10,10]
 AFILE
 #eh_GOE285_inv.dat
 eh_NACA3312_inv.dat
@@ -83,6 +86,8 @@ CONTROL
 elevator  1.0    0.60      0.0 1.0 0.0     +1
 #------------------------------------------------------------------------------------------
 SECTION
+# pergunta pro aleef
+# yle é metade da envergadura
 #Xle        Yle       Zle     Chord     Ainc
 -0.05 $       0.2455 $     0       0.20 $   0.0 $
 AFILE
@@ -109,7 +114,7 @@ TRANSLATE
 #------------------------------------------------------------------------------------------
 SECTION
 #Xle      Yle   Zle     Chord      Ainc
-0.09 $      0    0.21 $    0.095 $       0.0
+0.09$       0    0.21$    0.095$       0.0
 AFILE
 ev_BELL540.dat
 #ev_EPPLER472.dat
@@ -121,7 +126,7 @@ rudder    1.0    0.50    0.0 0.0 1.0
 #------------------------------------------------------------------------------------------
 SECTION
 #Xle    Yle     Zle     Chord     Ainc
-0       0       0       0.193      0.0
+0$       0       0$       0.193 $     0.0
 AFILE
 ev_BELL540.dat
 #ev_EPPLER472.dat
