@@ -1,0 +1,19 @@
+{
+  "children.surfaces.emp_horizontal.children.sections.SECTION_1.children.Xle": "-0.05",
+  "children.surfaces.emp_horizontal.children.sections.SECTION_1.children.Zle": "0",
+  "children.surfaces.emp_horizontal.children.sections.SECTION_1.children.Chord": "0.20",
+  "children.surfaces.emp_horizontal.children.sections.SECTION_1.children.Ainc": "0.0",
+  "children.surfaces.emp_horizontal.children.sections.SECTION_1.children.AFILE": "eh_NACA3312_inv.dat",
+  "children.surfaces.emp_horizontal.children.sections.SECTION_2.children.Xle": "-0.05",
+  "children.surfaces.emp_horizontal.children.sections.SECTION_2.children.Yle": "0.2455",
+  "children.surfaces.emp_horizontal.children.sections.SECTION_2.children.Chord": "0.20",
+  "children.surfaces.emp_horizontal.children.sections.SECTION_2.children.Ainc": "0.0",
+  "children.surfaces.emp_vertical.children.sections.SECTION_1.type": "SECTION",
+  "children.surfaces.emp_vertical.children.sections.SECTION_1.children.Xle": "0.09",
+  "children.surfaces.emp_vertical.children.sections.SECTION_1.children.Zle": "0.21",
+  "children.surfaces.emp_vertical.children.sections.SECTION_1.children.Chord": "0.095",
+  "children.surfaces.emp_vertical.children.sections.SECTION_2.type": "SECTION",
+  "children.surfaces.emp_vertical.children.sections.SECTION_2.children.Xle": "0",
+  "children.surfaces.emp_vertical.children.sections.SECTION_2.children.Zle": "0",
+  "children.surfaces.emp_vertical.children.sections.SECTION_2.children.Chord": "0.193"
+}

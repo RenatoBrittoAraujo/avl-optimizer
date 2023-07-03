@@ -785,10 +785,9 @@ class AppState:
 
 
 def keys():
-    app = AppState()
-    app.init_prod()
-    print(app.input_fp)
-    print(json.dumps(app.input_fp.flatten(), indent=4))
+    cfg = read_json(CONFIG_FILE)
+    input_fp = AVLFileParser(arquivo=read_file(cfg["base_input_file"]))
+    print(json.dumps(input_fp.flatten(), indent=4))
 
 
 def test():
