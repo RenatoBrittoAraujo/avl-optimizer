@@ -369,8 +369,12 @@ class ThreadQueue:
         if tid in self.results:
             result = self.results[tid]
             del self.results[tid]
-            if tid not in self.running_threads:
-                del self.label_map[tid]
+
+            # [TODO] delete label
+            # if tid not in self.running_threads:
+            #     label = self.label_map.
+            #     del self.label_map[self.la]
+
             return result
 
         print(
@@ -400,8 +404,8 @@ class ThreadQueue:
                 if not self.running_threads[tid].is_alive():
                     self.thread_create_queue.release()
                     del self.running_threads[tid]
-                    if tid not in self.results:
-                        del self.label_map[tid]
+                    # if tid not in self.results:
+                    #     del self.label_map[tid]
             self.thread_list_semaphore.release()
             time.sleep(0.1)
 
@@ -448,7 +452,7 @@ class Scorer:
         out_fp: AVLResultParser,
         inputs: list[Input],
         outputs: list[Output],
-    ) -> tuple[float, list[str], AVLResultParser]:
+    ) -> tuple[float, list[str]]:
         raise NotImplementedError
 
 
@@ -464,7 +468,7 @@ class SumScorer(Scorer):
         for out in outputs:
             val = float(out_fp.get_value(out.key))
             vals_sum += val
-        print("============== GOT NEW SCORE!!!!", vals_sum)
+        print("============== A NEW SCORE HAS BEEN CALCULATED:", vals_sum)
         return vals_sum, None, out_fp
 
 
@@ -495,7 +499,7 @@ class V1Scorer(Scorer):
         out_fp: AVLResultParser,
         inputs: list[Input],
         outputs: list[Output],
-    ) -> tuple[float, list[str], AVLResultParser]:
+    ) -> tuple[float, list[str]]:
         # [TODO] NOTA: Não tem garantias e limites de tamanho!
         # - to fazendo
         # - limitado direito no input
@@ -545,7 +549,7 @@ class V1Scorer(Scorer):
         )
 
         print("============== GOT NEW SCORE!!!!", P)
-        return P, erros, out_fp
+        return P, erros
 
 
 class Evaluator:
@@ -602,116 +606,150 @@ class Evaluator:
     def optimize(self, in_fp: AVLFileParser) -> tuple[AVLFileParser, AVLResultParser]:
         iter_count = 0
 
-        step_sizes = []
-        for inp in self.inputs:
-            if inp.min_variation:
-                step_sizes.append(inp.min_variation)
-            else:
-                step_sizes.append(inp.get_interval_amplitude() / self.interval_steps)
+        x_prev = [None for _ in range(len(self.inputs))]
+        p_prev = [None for _ in range(len(self.inputs))]
+        x_curr = [float(in_fp.get_value(inp.key)) for inp in self.inputs]
 
-        x_next = [float(in_fp.get_value(inp.key)) for inp in self.inputs]
+        curr_in_fp = in_fp
+        curr_out_fp = self.output_file
 
-        print("[main] Getting initial out file...")
-        init_out_fp = self.output_file
-        if init_out_fp is None:
-            out_fp = self.avl.analyse_from_fp(in_fp)
-            _, _, init_out_fp = self.get_score_from_scorer(in_fp, out_fp)
-            write_file(self.output_file_loc, init_out_fp.parse_into_file())
+        if curr_out_fp is None:
+            print("[main] init file not found. getting initial out file...")
+            curr_out_fp = self.avl.analyse_from_fp(curr_in_fp)
+            if self.output_file is None:
+                self.output_file = curr_out_fp
+                write_file(self.output_file_loc, curr_out_fp.parse_into_file())
 
-        last_out_fp = None
+        p_curr = self.get_score_from_scorer(
+            curr_in_fp,
+            curr_out_fp,
+        )[0]
 
         while True:
+            print(
+                f"============== [main] ITERATION {iter_count} STARTED =============="
+            )
+            print(f"x_prev: {x_prev}")
+            print(f"p_prev: {p_prev}")
+            print(f"x_curr: {x_curr}")
+            print(f"p_curr: {p_curr}")
+
             if iter_count > self.max_iter_count:
-                return x_next
-            iter_count += 1
-            x_new = x_next.copy()
+                return x_curr
+
+            x_new = x_curr.copy()
             x_out_changes = False
             x_inp_changes = False
 
             print(f"[main]  CREATING {len(self.inputs)} NEW THREADS")
 
             for inp in self.inputs:
-                indx = self.inputs.index(inp)
+                indx = inp.index
+
+                x_test = x_curr.copy()
+                variation = self.get_next_variation(
+                    indx,
+                    x_curr=x_curr[indx],
+                    p_curr=p_curr,
+                    x_prev=x_prev[indx],
+                    p_prev=p_prev[indx],
+                )
+                print("testing input", inp.key, "with variation", variation)
+
+                # test values for this case
+                x_test[inp.index] += variation
+
+                # all changes for this iteration
+                x_new[inp.index] += variation
+
+                new_in_fp = self.get_in_fp_from_vals(x_test)
 
                 self.thread_queue.add_new_thread_blocking(
                     self.avl.analyse_for_thread,
-                    (in_fp,),
-                    label=int(indx),
+                    (new_in_fp,),
+                    label=f"{inp.key}_{iter_count}",
                 )
 
             self.thread_queue.wait_all_threads()
 
             for i in range(len(x_new)):
-                if x_next[i] != x_new[i]:
+                if x_curr[i] != x_new[i]:
                     print(
-                        f"Changed the input {self.inputs[i].key} in x_next versus x_new from {x_next[i]} to {x_new[i]}"
+                        f"Changed the input {self.inputs[i].key} in x_curr versus x_new from {x_curr[i]} to {x_new[i]}"
                     )
                     x_inp_changes = True
 
-                out_fp = self.thread_queue.get_thread_result_blocking(str(i))
-                # out_fp = self.output_file
-                last_out_fp = out_fp
+                new_out_fp = self.thread_queue.get_thread_result_blocking(str(i))
 
-                if out_fp is None:
-                    print("out_fp is None!")
+                if new_out_fp is None:
+                    print("new_out_fp is None!")
                     continue
 
                 max_err = 1e-6
-                flt = init_out_fp.flatten()
+                flt = new_out_fp.flatten()
                 items = flt.items()
+
                 for key, orig_val in items:
-                    res_val = float(out_fp.get_value(key))
-                    orig_val = float(orig_val)
+                    orig_val = float(curr_out_fp.get_value(key))
+                    res_val = float(orig_val)
+                    p_new = self.get_score_from_scorer(in_fp, new_out_fp)[0]
+
+                    x_prev[indx] = x_curr[indx]
+                    p_prev[indx] = p_curr
+
                     if math.fabs(res_val - orig_val) > max_err:
                         x_out_changes = True
                         print(f"[main] the attribute '{key}' is changed")
                         print(f"[main] intial value is: {orig_val}")
                         print(f"[main] new value is:    {res_val}")
 
+            curr_in_fp = self.get_in_fp_from_vals(x_new)
+            curr_out_fp = self.avl.analyse_from_fp(curr_in_fp)
+
+            p_new = self.get_score_from_scorer(curr_in_fp, curr_out_fp)[0]
+
+            print(f"overall score changed from {p_curr} to {p_new}")
+            print(f"when all changes individual changes are applied")
+            p_curr = p_new
+
             if not x_out_changes and not x_inp_changes:
-                print("no changes detecting, ending the evalutor")
+                print("no changes detected, ending the evalutor")
                 break
 
-        return self.get_in_fp_from_vals(x_next), last_out_fp
+            iter_count += 1
 
-    def get_new_variations(
+        return self.get_in_fp_from_vals(x_curr), curr_out_fp
+
+    def get_next_variation(
         self,
         indx: int,
-        inp: list[float],
-        variation: float,
-    ) -> tuple[float, bool]:
-        # # increase so that a convergance is eventually forced
-        # if iter_count > self.limit_iter_count:
-        #     step_sizes[indx] = step_sizes[indx] * self.limit_variation_factor
+        x_curr: float,
+        p_curr: float,
+        x_prev: float = None,
+        p_prev: float = None,
+    ) -> float:
+        # chute incial
+        if x_prev is None and p_prev is None:
+            if self.inputs[indx].min_variation:
+                return self.inputs[indx].min_variation
+            else:
+                return self.inputs[indx].get_interval_amplitude() / self.interval_steps
 
-        in_fp = self.get_in_fp_from_vals(inp)
-        out_fp = self.avl.analyse_from_fp(in_fp)
-        fx, errors, out_fp = self.get_score_from_scorer(in_fp, out_fp)
+        x_variation = x_curr - x_prev
+        y_variation = p_curr - p_prev
+        derivative = y_variation / x_variation
 
-        if errors is not None:
-            print("ERROS!\n", errors)
+        next_x = x_curr - p_curr / derivative
 
-        # d = f(x) / (x1 - x2)
-        d = fx / -variation
+        # [TODO] VALIDATE NEXT_X IS WITHIN BOUNDS!
 
-        # if math.fabs(d*step_sizes[indx]) < min_variation[indx]:
-        #     continue
-        # el
-        print(f"d = {d}")
-        if d > 0:
-            nv = inp[indx] + variation * d
-            inp[indx] = nv
-        else:
-            nv = inp[indx] - variation * d
-            inp[indx] = nv
-
-        return out_fp
+        return next_x
 
     def get_score_from_scorer(
         self,
         in_fp: AVLFileParser,
         out_fp: AVLResultParser,
-    ) -> tuple[float, list[str], AVLResultParser]:
+    ) -> tuple[float, list[str]]:
         return self.scorer.get_score(in_fp, out_fp, self.inputs, self.outputs)
 
     def get_in_fp_from_vals(self, x: list[float]) -> AVLFileParser:

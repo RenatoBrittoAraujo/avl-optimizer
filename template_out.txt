@@ -27,7 +27,7 @@
   CLff  = {CLff}     CDff  = {CDff}    | Trefftz
   CYff  = {CYff}         e = {e}    | Plane  
 
-   flaperon        = {flaperon}
+   aileron        = {aileron}
    elevator        = {elevator}
    rudder          = {rudder}
 
@@ -51,7 +51,7 @@
  y  mom.  Cm |    Cmp = {Cmp}    Cmq = {Cmq}    Cmr = {Cmr}
  z' mom.  Cn'|    Cnp = {Cnp}    Cnq = {Cnq}    Cnr = {Cnr}
 
-                  flaperon     d01     elevator     d02     rudder       d03 
+                  aileron     d01     elevator     d02     rudder       d03 
                   ----------------    ----------------    ----------------
  z' force CL |   CLd01 = {CLd01}   CLd02 = {CLd02}   CLd03 = {CLd03}
  y  force CY |   CYd01 = {CYd01}   CYd02 = {CYd02}   CYd03 = {CYd03}

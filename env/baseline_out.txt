@@ -27,7 +27,7 @@
   CLff  = -0.08174     CDff  = 0.0030431    | Trefftz
   CYff  = 0.00000         e = 0.0977    | Plane  
 
-   flaperon        = {flaperon}
+   aileron        = 0.00000
    elevator        = 0.00000
    rudder          = 0.00000
 
@@ -51,7 +51,7 @@
  y  mom.  Cm |    Cmp = 0.000000    Cmq = -16.872805    Cmr = -0.000000
  z' mom.  Cn'|    Cnp = 0.013280    Cnq = 0.000000    Cnr = -0.068533
 
-                  flaperon     d01     elevator     d02     rudder       d03 
+                  aileron     d01     elevator     d02     rudder       d03 
                   ----------------    ----------------    ----------------
  z' force CL |   CLd01 = 0.000000   CLd02 = 0.010320   CLd03 = -0.000000
  y  force CY |   CYd01 = 0.000000   CYd02 = 0.000000   CYd03 = -0.002307
