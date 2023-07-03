@@ -386,7 +386,8 @@ class ThreadQueue:
         keys = list(self.running_threads.keys()).copy()
         while len(keys) > 0:
             tid = keys.pop()
-            self.running_threads[tid].join()
+            if tid in self.running_threads:
+                self.running_threads[tid].join()
 
     # a thread to remove running threads
     def check_running_threads(self):
@@ -416,8 +417,8 @@ class Input:
     def __init__(self, key: str, curr: float, value: dict):
         self.key = key
         self.interval = value.get("interval")
-        self.min_variation = value.get("min_variation")
-        self.max_variation = value.get("max_variation")
+        self.min_variation = value.get("min_variation") or value.get("step")
+        self.max_variation = value.get("max_variation") or value.get("step")
         self.curr = curr
 
         global INPUT_INDEX

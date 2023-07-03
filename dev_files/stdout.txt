@@ -27,7 +27,7 @@
    NAME s  Specify new configuration name
 
  AVL   c>  
- Reading file: in_0.avl  ...
+ Reading file: in_12.avl  ...
 
  Configuration: WING_2022                                                   
 
