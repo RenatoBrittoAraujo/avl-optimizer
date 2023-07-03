@@ -27,7 +27,7 @@
    NAME s  Specify new configuration name
 
  AVL   c>  
- Reading file: in_19.avl  ...
+ Reading file: in_27.avl  ...
 
  Configuration: WING_2022                                                   
 
@@ -145,14 +145,14 @@
   Mach  =     0.000     rb/2V =  -0.00000     r'b/2V =  -0.00000
 
   CXtot =  -0.00080     Cltot =   0.00000     Cl'tot =   0.00000
-  CYtot =   0.00000     Cmtot =   0.14067
-  CZtot =   0.04150     Cntot =  -0.00000     Cn'tot =  -0.00000
+  CYtot =   0.00000     Cmtot =   0.14015
+  CZtot =   0.04159     Cntot =  -0.00000     Cn'tot =  -0.00000
 
-  CLtot =  -0.04150
+  CLtot =  -0.04159
   CDtot =   0.00080
-  CDvis =   0.00000     CDind = 0.0008028
-  CLff  =  -0.04150     CDff  = 0.0007985    | Trefftz
-  CYff  =   0.00000         e =    0.0960    | Plane  
+  CDvis =   0.00000     CDind = 0.0008004
+  CLff  =  -0.04159     CDff  = 0.0008002    | Trefftz
+  CYff  =   0.00000         e =    0.0962    | Plane  
 
    aileron         =   0.00000
    elevator        =   0.00000

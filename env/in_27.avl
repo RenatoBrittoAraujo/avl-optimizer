@@ -114,8 +114,10 @@ rudder 1.0 0.50 0.0 0.0 1.0
 #---------------
 SECTION
 #Xle Yle Zle Chord Ainc
-0.0 0 0.01 0.193 0.0
+0.0 0 0.0 0.093 0.0
 Xle
+0.0 
+Zle
 0.0 
 AFILE
 ev_BELL540.dat 

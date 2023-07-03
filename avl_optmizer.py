@@ -342,6 +342,7 @@ class ThreadQueue:
             label = str(thread_id)
         if label in self.label_map:
             raise Exception(f"label '{label}' already exists")
+        self.label_map[label] = thread_id
         args = (thread_id, label, self.results, self.thread_end_event, *args)
         t = threading.Thread(
             target=procedure,
@@ -548,7 +549,7 @@ class V1Scorer(Scorer):
             + -0.1 * Cmtot
         )
 
-        print("============== GOT NEW SCORE!!!!", P)
+        # print("============== GOT NEW SCORE!!!!", P)
         return P, erros
 
 
@@ -601,13 +602,137 @@ class Evaluator:
         self.output_file_loc = output_file_loc
         self.res_memo = {}
 
-    # Implementation of Newton-Raphson method
-    # https://en.wikipedia.org/wiki/Newton%27s_method
-    def optimize(self, in_fp: AVLFileParser) -> tuple[AVLFileParser, AVLResultParser]:
-        iter_count = 0
+    # # Implementation of Newton-Raphson method
+    # # https://en.wikipedia.org/wiki/Newton%27s_method
+    # def optimize(self, in_fp: AVLFileParser) -> tuple[AVLFileParser, AVLResultParser]:
+    #     print("RUNNING NEWTON-RAPHSON OPTIMIZATION")
+    #     iter_count = 0
 
-        x_prev = [None for _ in range(len(self.inputs))]
-        p_prev = [None for _ in range(len(self.inputs))]
+    #     x_prev = [None for _ in range(len(self.inputs))]
+    #     p_prev = [None for _ in range(len(self.inputs))]
+    #     x_curr = [float(in_fp.get_value(inp.key)) for inp in self.inputs]
+
+    #     curr_in_fp = in_fp
+    #     curr_out_fp = self.output_file
+
+    #     if curr_out_fp is None:
+    #         print("[main] init file not found. getting initial out file...")
+    #         curr_out_fp = self.avl.analyse_from_fp(curr_in_fp)
+    #         if self.output_file is None:
+    #             self.output_file = curr_out_fp
+    #             write_file(self.output_file_loc, curr_out_fp.parse_into_file())
+
+    #     p_curr = self.get_score_from_scorer(
+    #         curr_in_fp,
+    #         curr_out_fp,
+    #     )[0]
+
+    #     while True:
+    #         print(
+    #             f"============== [main] ITERATION {iter_count} STARTED =============="
+    #         )
+    #         print(f"x_prev: {x_prev}")
+    #         print(f"p_prev: {p_prev}")
+    #         print(f"x_curr: {x_curr}")
+    #         print(f"p_curr: {p_curr}")
+
+    #         if iter_count > self.max_iter_count:
+    #             return x_curr
+
+    #         x_new = x_curr.copy()
+    #         x_out_changes = False
+    #         x_inp_changes = False
+
+    #         labels = ["" for _ in range(len(self.inputs))]
+
+    #         print(f"[main]  CREATING {len(self.inputs)} NEW THREADS")
+
+    #         for inp in self.inputs:
+    #             indx = inp.index
+
+    #             x_test = x_curr.copy()
+    #             variation = self.get_next_variation(
+    #                 indx,
+    #                 x_curr=x_curr[indx],
+    #                 p_curr=p_curr,
+    #                 x_prev=x_prev[indx],
+    #                 p_prev=p_prev[indx],
+    #             )
+    #             print("testing input", inp.key, "with variation", variation)
+
+    #             # test values for this case
+    #             x_test[indx] += variation
+
+    #             # all changes for this iteration
+    #             x_new[indx] += variation
+
+    #             new_in_fp = self.get_in_fp_from_vals(x_test)
+
+    #             labels[indx] = f"{inp.key}_{iter_count}"
+
+    #             self.thread_queue.add_new_thread_blocking(
+    #                 procedure=self.avl.analyse_for_thread,
+    #                 args=(new_in_fp,),
+    #                 label=labels[indx],
+    #             )
+
+    #         self.thread_queue.wait_all_threads()
+
+    #         for i in range(len(x_new)):
+    #             if x_curr[i] != x_new[i]:
+    #                 print(
+    #                     f"Changed the input {self.inputs[i].key} in x_curr versus x_new from {x_curr[i]} to {x_new[i]}"
+    #                 )
+    #                 x_inp_changes = True
+
+    #             new_out_fp = self.thread_queue.get_thread_result_blocking(labels[i])
+    #             if new_out_fp is None:
+    #                 print("new_out_fp is None!")
+    #                 continue
+
+    #             max_err = 1e-6
+
+    #             p_case_new = self.get_score_from_scorer(in_fp, new_out_fp)[0]
+    #             p_prev[i] = p_case_new
+
+    #             for key, orig_val in new_out_fp.flatten().items():
+    #                 orig_val = float(curr_out_fp.get_value(key))
+    #                 res_val = float(orig_val)
+
+    #                 if math.fabs(res_val - orig_val) > max_err:
+    #                     x_out_changes = True
+    #                     print(f"[main] the attribute '{key}' is changed")
+    #                     print(f"[main] intial value is: {orig_val}")
+    #                     print(f"[main] new value is:    {res_val}")
+
+    #         curr_in_fp = self.get_in_fp_from_vals(x_new)
+    #         curr_out_fp = self.avl.analyse_from_fp(curr_in_fp)
+
+    #         p_new = self.get_score_from_scorer(curr_in_fp, curr_out_fp)[0]
+
+    #         print(f"overall score changed from {p_curr} to {p_new}")
+    #         print(f"when all changes individual changes are applied")
+
+    #         p_curr = p_new
+    #         x_prev = x_curr
+    #         x_curr = x_new
+
+    #         if not x_out_changes and not x_inp_changes:
+    #             print("no changes detected, ending the evalutor")
+    #             break
+
+    #         iter_count += 1
+
+    #     return self.get_in_fp_from_vals(x_curr), curr_out_fp
+
+    def optimize_ternary_search(
+        self, in_fp: AVLFileParser
+    ) -> tuple[AVLFileParser, AVLResultParser]:
+        print("RUNNING TERNARY SEARCH OPTIMIZATION")
+
+        iter_count = 0
+        min_diff = 1e-6
+
         x_curr = [float(in_fp.get_value(inp.key)) for inp in self.inputs]
 
         curr_in_fp = in_fp
@@ -629,87 +754,133 @@ class Evaluator:
             print(
                 f"============== [main] ITERATION {iter_count} STARTED =============="
             )
-            print(f"x_prev: {x_prev}")
-            print(f"p_prev: {p_prev}")
             print(f"x_curr: {x_curr}")
             print(f"p_curr: {p_curr}")
 
             if iter_count > self.max_iter_count:
                 return x_curr
 
-            x_new = x_curr.copy()
             x_out_changes = False
             x_inp_changes = False
 
-            print(f"[main]  CREATING {len(self.inputs)} NEW THREADS")
+            labels = ["" for _ in range(len(self.inputs))]
+
+            print(f"[main]  CREATING {len(self.inputs)*2} NEW THREADS")
 
             for inp in self.inputs:
                 indx = inp.index
+                variation = self.get_default_variation(indx)
+                if variation < min_diff:
+                    continue
 
-                x_test = x_curr.copy()
-                variation = self.get_next_variation(
-                    indx,
-                    x_curr=x_curr[indx],
-                    p_curr=p_curr,
-                    x_prev=x_prev[indx],
-                    p_prev=p_prev[indx],
+                labels[indx] = f"{inp.key}_{iter_count}"
+
+                x_test_p = x_curr.copy()
+                x_test_p[indx] += variation
+                new_p_in_fp = self.get_in_fp_from_vals(x_test_p)
+                label = f"{labels[indx]}_p"
+                print(
+                    "testing input",
+                    inp.key,
+                    "with postive variation",
+                    variation,
+                    "valued",
+                    x_test_p[indx],
                 )
-                print("testing input", inp.key, "with variation", variation)
-
-                # test values for this case
-                x_test[inp.index] += variation
-
-                # all changes for this iteration
-                x_new[inp.index] += variation
-
-                new_in_fp = self.get_in_fp_from_vals(x_test)
-
                 self.thread_queue.add_new_thread_blocking(
-                    self.avl.analyse_for_thread,
-                    (new_in_fp,),
-                    label=f"{inp.key}_{iter_count}",
+                    procedure=self.avl.analyse_for_thread,
+                    args=(new_p_in_fp,),
+                    label=label,
+                )
+
+                x_test_n = x_curr.copy()
+                x_test_n[indx] -= variation
+                new_n_in_fp = self.get_in_fp_from_vals(x_test_n)
+                label = f"{labels[indx]}_n"
+                print(
+                    "testing input",
+                    inp.key,
+                    "with postive variation",
+                    variation,
+                    "valued",
+                    x_test_n[indx],
+                )
+                self.thread_queue.add_new_thread_blocking(
+                    procedure=self.avl.analyse_for_thread,
+                    args=(new_n_in_fp,),
+                    label=label,
                 )
 
             self.thread_queue.wait_all_threads()
 
-            for i in range(len(x_new)):
-                if x_curr[i] != x_new[i]:
-                    print(
-                        f"Changed the input {self.inputs[i].key} in x_curr versus x_new from {x_curr[i]} to {x_new[i]}"
-                    )
-                    x_inp_changes = True
-
-                new_out_fp = self.thread_queue.get_thread_result_blocking(str(i))
-
-                if new_out_fp is None:
-                    print("new_out_fp is None!")
+            for i in range(len(x_curr)):
+                variation = self.get_default_variation(i)
+                if variation < min_diff:
                     continue
 
-                max_err = 1e-6
-                flt = new_out_fp.flatten()
-                items = flt.items()
+                label = labels[i]
 
-                for key, orig_val in items:
-                    orig_val = float(curr_out_fp.get_value(key))
-                    res_val = float(orig_val)
-                    p_new = self.get_score_from_scorer(in_fp, new_out_fp)[0]
+                out_fp_pos = self.thread_queue.get_thread_result_blocking(label + "_p")
+                x_validate = x_curr.copy()
+                x_validate[i] += variation
+                in_pos_fp = self.get_in_fp_from_vals(x_validate)
+                p_pos = self.get_score_from_scorer(in_pos_fp, out_fp_pos)[0]
 
-                    x_prev[indx] = x_curr[indx]
-                    p_prev[indx] = p_curr
+                out_fp_neg = self.thread_queue.get_thread_result_blocking(label + "_n")
+                x_validate = x_curr.copy()
+                x_validate[i] -= variation
+                in_neg_fp = self.get_in_fp_from_vals(x_validate)
+                p_neg = self.get_score_from_scorer(in_neg_fp, out_fp_neg)[0]
 
-                    if math.fabs(res_val - orig_val) > max_err:
+                diff_pos = math.fabs(p_pos - p_curr)
+                diff_neg = math.fabs(p_neg - p_curr)
+
+                print("[main] --- checking input ", self.inputs[i].key)
+                print("[main] initial value is:", x_curr[i])
+
+                if diff_pos < min_diff and diff_neg < min_diff:
+                    print(f"[main] has no effect on the score, skipping from now on...")
+                    self.inputs[indx].min_variation = 0
+                    continue
+
+                for key, pos in out_fp_pos.flatten().items():
+                    orig_val = float(x_curr[i])
+                    pos_val = float(pos)
+                    neg_val = float(out_fp_neg.get_value(key))
+
+                    if math.fabs(pos_val - orig_val) > min_diff:
                         x_out_changes = True
-                        print(f"[main] the attribute '{key}' is changed")
-                        print(f"[main] intial value is: {orig_val}")
-                        print(f"[main] new value is:    {res_val}")
+                        # print(
+                        #     f"[main] attribute changed due to a positive variation {variation}: '{key}' "
+                        # )
+                        # print(
+                        #     f"[main] old_x: {x_curr[i]} old_p: {p_curr} new_x: {pos_val} new_p: {p_pos}"
+                        # )
 
-            curr_in_fp = self.get_in_fp_from_vals(x_new)
+                    if math.fabs(neg_val - orig_val) > min_diff:
+                        x_out_changes = True
+                        # print(
+                        #     f"[main] attribute changed due to a positive variation {variation}: '{key}' "
+                        # )
+                        # print(
+                        #     f"[main] old_x: {x_curr[i]} old_p: {p_curr} new_x: {neg_val} new_p: {p_pos}"
+                        # )
+
+                print("[main] variation", variation)
+                if diff_pos > diff_neg:
+                    print(f"[main] has changed to {x_curr[i] + variation}")
+                    x_curr[i] += variation
+                else:
+                    print(f"[main] has changed to {x_curr[i] - variation}")
+                    x_curr[i] -= variation
+
+            curr_in_fp = self.get_in_fp_from_vals(x_curr)
             curr_out_fp = self.avl.analyse_from_fp(curr_in_fp)
-
             p_new = self.get_score_from_scorer(curr_in_fp, curr_out_fp)[0]
 
             print(f"overall score changed from {p_curr} to {p_new}")
             print(f"when all changes individual changes are applied")
+
             p_curr = p_new
 
             if not x_out_changes and not x_inp_changes:
@@ -719,6 +890,12 @@ class Evaluator:
             iter_count += 1
 
         return self.get_in_fp_from_vals(x_curr), curr_out_fp
+
+    def get_default_variation(self, indx: int) -> float:
+        if self.inputs[indx].min_variation:
+            return self.inputs[indx].min_variation
+        else:
+            return self.inputs[indx].get_interval_amplitude() / self.interval_steps
 
     def get_next_variation(
         self,
@@ -730,10 +907,12 @@ class Evaluator:
     ) -> float:
         # chute incial
         if x_prev is None and p_prev is None:
-            if self.inputs[indx].min_variation:
-                return self.inputs[indx].min_variation
-            else:
-                return self.inputs[indx].get_interval_amplitude() / self.interval_steps
+            return self.get_initial_variation(indx)
+
+        if x_prev is None:
+            raise Exception("x_prev is None!")
+        if p_prev is None:
+            raise Exception("p_prev is None!")
 
         x_variation = x_curr - x_prev
         y_variation = p_curr - p_prev
@@ -871,7 +1050,7 @@ def prod():
     app = AppState()
     app.init_prod()
 
-    end_in_fp, end_out_fp = app.evaluator.optimize(app.input_fp)
+    end_in_fp, end_out_fp = app.evaluator.optimize_ternary_search(app.input_fp)
 
     write_file(app.cfg["final_input_file"], end_in_fp.parse_into_file())
 
