@@ -19,6 +19,8 @@ No arquivo `avl_optmizer.py` é possível encontrar a classe `SumScorer(Scorer)`
 ## TODO
 
 - Aileron e flaperon. Template tinha `flaperon` mas esse nome é parametrizado.
+- O processo newton raphson não serve, deveria fazer busca ternária
+- ERRO `could not convert string to float: '***********'`  no `curr_out_fp.get_value(key)` pra key = `Cmq`
 
 ## Funcionamento do progama
 

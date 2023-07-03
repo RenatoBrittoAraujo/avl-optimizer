@@ -217,11 +217,13 @@ class AVL:
         in_fp: AVLFileParser,
     ) -> AVLResultParser:
         nid = self.get_new_id()
-        print(f"[id: {thread_id}, label: {thread_label}, nid: {nid}] thread started")
+        # print(f"[id: {thread_id}, label: {thread_label}, nid: {nid}] thread started")
+        print(f"[id: {thread_id}, nid: {nid}] thread started")
         res_fp = self.analyse_from_fp(in_fp, nid=nid)
         thread_results[thread_id] = res_fp
         thread_end_event.set()
-        print(f"[id: {thread_id}, label: {thread_label}, nid: {nid}] thread ended")
+        # print(f"[id: {thread_id}, label: {thread_label}, nid: {nid}] thread ended")
+        print(f"[id: {thread_id}, nid: {nid}] thread ended")
         return res_fp
 
     def analyse_from_fp(self, in_fp: AVLFileParser, nid: int = None) -> AVLResultParser:
@@ -750,6 +752,8 @@ class Evaluator:
             curr_out_fp,
         )[0]
 
+        skip = set()
+
         while True:
             print(
                 f"============== [main] ITERATION {iter_count} STARTED =============="
@@ -762,30 +766,41 @@ class Evaluator:
 
             x_out_changes = False
             x_inp_changes = False
+            inp_size = len(self.inputs)
 
-            labels = ["" for _ in range(len(self.inputs))]
+            labels = ["" for _ in range(inp_size)]
 
-            print(f"[main]  CREATING {len(self.inputs)*2} NEW THREADS")
+            n_threads = 0
+            for i in range(inp_size):
+                if i in skip:
+                    continue
+                n_threads += 2
 
-            for inp in self.inputs:
-                indx = inp.index
-                variation = self.get_default_variation(indx)
+            print(f"[main]  CREATING {n_threads} NEW THREADS")
+
+            for i in range(inp_size):
+                if i in skip:
+                    continue
+
+                inp = self.inputs[i]
+
+                variation = self.get_default_variation(i)
                 if variation < min_diff:
                     continue
 
-                labels[indx] = f"{inp.key}_{iter_count}"
+                labels[i] = f"{inp.key}_{iter_count}"
 
                 x_test_p = x_curr.copy()
-                x_test_p[indx] += variation
+                x_test_p[i] += variation
                 new_p_in_fp = self.get_in_fp_from_vals(x_test_p)
-                label = f"{labels[indx]}_p"
+                label = f"{labels[i]}_p"
                 print(
                     "testing input",
                     inp.key,
-                    "with postive variation",
+                    "with positive variation",
                     variation,
                     "valued",
-                    x_test_p[indx],
+                    x_test_p[i],
                 )
                 self.thread_queue.add_new_thread_blocking(
                     procedure=self.avl.analyse_for_thread,
@@ -794,16 +809,16 @@ class Evaluator:
                 )
 
                 x_test_n = x_curr.copy()
-                x_test_n[indx] -= variation
+                x_test_n[i] -= variation
                 new_n_in_fp = self.get_in_fp_from_vals(x_test_n)
-                label = f"{labels[indx]}_n"
+                label = f"{labels[i]}_n"
                 print(
                     "testing input",
                     inp.key,
-                    "with postive variation",
+                    "with negative variation",
                     variation,
                     "valued",
-                    x_test_n[indx],
+                    x_test_n[i],
                 )
                 self.thread_queue.add_new_thread_blocking(
                     procedure=self.avl.analyse_for_thread,
@@ -813,9 +828,8 @@ class Evaluator:
 
             self.thread_queue.wait_all_threads()
 
-            for i in range(len(x_curr)):
-                variation = self.get_default_variation(i)
-                if variation < min_diff:
+            for i in range(inp_size):
+                if i in skip:
                     continue
 
                 label = labels[i]
@@ -832,47 +846,64 @@ class Evaluator:
                 in_neg_fp = self.get_in_fp_from_vals(x_validate)
                 p_neg = self.get_score_from_scorer(in_neg_fp, out_fp_neg)[0]
 
-                diff_pos = math.fabs(p_pos - p_curr)
-                diff_neg = math.fabs(p_neg - p_curr)
+                diff_pos = p_pos - p_curr
+                diff_neg = p_neg - p_curr
 
                 print("[main] --- checking input ", self.inputs[i].key)
                 print("[main] initial value is:", x_curr[i])
 
                 if diff_pos < min_diff and diff_neg < min_diff:
-                    print(f"[main] has no effect on the score, skipping from now on...")
-                    self.inputs[indx].min_variation = 0
+                    print(
+                        f"[main] has no positive effect on the score, skipping from now on..."
+                    )
+                    skip.add(i)
                     continue
 
-                for key, pos in out_fp_pos.flatten().items():
-                    orig_val = float(x_curr[i])
-                    pos_val = float(pos)
-                    neg_val = float(out_fp_neg.get_value(key))
+                # for key, pos in out_fp_pos.flatten().items():
+                #     orig_val = float(x_curr[i])
+                #     pos_val = float(pos)
+                #     neg_val = float(out_fp_neg.get_value(key))
 
-                    if math.fabs(pos_val - orig_val) > min_diff:
-                        x_out_changes = True
-                        # print(
-                        #     f"[main] attribute changed due to a positive variation {variation}: '{key}' "
-                        # )
-                        # print(
-                        #     f"[main] old_x: {x_curr[i]} old_p: {p_curr} new_x: {pos_val} new_p: {p_pos}"
-                        # )
+                #     if math.fabs(pos_val - orig_val) > min_diff:
+                #         x_out_changes = True
+                #         # print(
+                #         #     f"[main] attribute changed due to a positive variation {variation}: '{key}' "
+                #         # )
+                #         # print(
+                #         #     f"[main] old_x: {x_curr[i]} old_p: {p_curr} new_x: {pos_val} new_p: {p_pos}"
+                #         # )
 
-                    if math.fabs(neg_val - orig_val) > min_diff:
-                        x_out_changes = True
-                        # print(
-                        #     f"[main] attribute changed due to a positive variation {variation}: '{key}' "
-                        # )
-                        # print(
-                        #     f"[main] old_x: {x_curr[i]} old_p: {p_curr} new_x: {neg_val} new_p: {p_pos}"
-                        # )
+                #     if math.fabs(neg_val - orig_val) > min_diff:
+                #         x_out_changes = True
+                #         # print(
+                #         #     f"[main] attribute changed due to a positive variation {variation}: '{key}' "
+                #         # )
+                #         # print(
+                #         #     f"[main] old_x: {x_curr[i]} old_p: {p_curr} new_x: {neg_val} new_p: {p_pos}"
+                #         # )
 
                 print("[main] variation", variation)
-                if diff_pos > diff_neg:
+                if diff_pos > 0 and diff_pos > diff_neg:
                     print(f"[main] has changed to {x_curr[i] + variation}")
+                    print(
+                        f"[main] because it raises the score from {p_curr} to {p_pos}"
+                    )
                     x_curr[i] += variation
-                else:
+                    x_out_changes = True
+
+                if diff_neg > 0 and diff_neg > diff_pos:
                     print(f"[main] has changed to {x_curr[i] - variation}")
+                    print(
+                        f"[main] because it raises the score from {p_curr} to {p_neg}"
+                    )
                     x_curr[i] -= variation
+                    x_out_changes = True
+
+                if not x_out_changes:
+                    print(
+                        f"[main] all changes worsen the score! keeping it the same from now on"
+                    )
+                    skip.add(i)
 
             curr_in_fp = self.get_in_fp_from_vals(x_curr)
             curr_out_fp = self.avl.analyse_from_fp(curr_in_fp)
@@ -892,11 +923,11 @@ class Evaluator:
         return self.get_in_fp_from_vals(x_curr), curr_out_fp
 
     def get_default_variation(self, indx: int) -> float:
-        if self.inputs[indx].min_variation:
+        if self.inputs[indx].min_variation is not None:
             return self.inputs[indx].min_variation
         else:
             return self.inputs[indx].get_interval_amplitude() / self.interval_steps
-
+        
     def get_next_variation(
         self,
         indx: int,
@@ -961,9 +992,11 @@ class AppState:
         self.input_fp = AVLFileParser(arquivo=read_file(self.cfg["base_input_file"]))
 
         if exists(self.cfg["avl_output_file"]):
-            self.output_initial_fp = AVLResultParser(
-                arquivo=read_file(self.cfg["avl_output_file"])
-            )
+            delete_file(self.cfg["avl_output_file"])
+            # self.output_initial_fp = AVLResultParser(
+            #     arquivo=read_file(self.cfg["avl_output_file"])
+            # )
+            self.output_initial_fp = None
         else:
             self.output_initial_fp = None
 
