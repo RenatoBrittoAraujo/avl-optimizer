@@ -843,6 +843,6 @@ def prod():
 
 
 if __name__ == "__main__":
-    # prod()
+    prod()
     # test()
-    keys()
+    # keys()
