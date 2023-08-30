@@ -62,7 +62,7 @@ TRANSLATE
 #---------------
 SECTION
 #Xle Yle Zle Chord Ainc
--0.05 0.0 0 0.20 0.0
+<__main__.Input object at 0x7fb8180e79d0> 0.0 <__main__.Input object at 0x7fb8180e7a30> <__main__.Input object at 0x7fb8180e7a90> <__main__.Input object at 0x7fb8180e7af0>
 AFILE
 eh_NACA3312_inv.dat 
 #---------------
@@ -74,7 +74,7 @@ elevator 1.0 0.60 0.0 1.0 0.0 +1
 #---------------
 SECTION
 #Xle Yle Zle Chord Ainc
--0.05 0.2455 0 0.20 0.0
+<__main__.Input object at 0x7fb8180e7b50> <__main__.Input object at 0x7fb8180e7bb0> 0 <__main__.Input object at 0x7fb8180e7c10> <__main__.Input object at 0x7fb8180e7c70>
 AFILE
 eh_NACA3312_inv.dat 
 #---------------
@@ -96,7 +96,7 @@ TRANSLATE
 #---------------
 SECTION
 #Xle Yle Zle Chord Ainc
-0.09 0 0.21 0.095 0.0
+<__main__.Input object at 0x7fb8180e7b50> 0 <__main__.Input object at 0x7fb8180e7a90> <__main__.Input object at 0x7fb8180e79d0> 0.0
 AFILE
 ev_BELL540.dat 
 #---------------
@@ -108,7 +108,7 @@ rudder 1.0 0.50 0.0 0.0 1.0
 #---------------
 SECTION
 #Xle Yle Zle Chord Ainc
-0 0 0 0.193 0.0
+<__main__.Input object at 0x7fb8180e7970> 0 <__main__.Input object at 0x7fb8180e7ee0> <__main__.Input object at 0x7fb8180e7d00> 0.0
 AFILE
 ev_BELL540.dat 
 #---------------

@@ -369,7 +369,7 @@ class ThreadQueue:
         if tid in self.results:
             result = self.results[tid]
             del self.results[tid]
-            if tid not in self.running_threads:
+            if tid not in self.running_threads and tid in self.label_map:
                 del self.label_map[tid]
             return result
 
@@ -409,16 +409,26 @@ class ThreadQueue:
 class Input:
     key: str
     index: int
-    interval: list[float]
-    min_variation: float
-    max_variation: float
+    interval_max: float
+    interval_min: float
     curr: float
+    step: float
 
     def __init__(self, key: str, curr: float, value: dict):
         self.key = key
-        self.interval = value.get("interval")
-        self.min_variation = value.get("min_variation") or value.get("step")
-        self.max_variation = value.get("max_variation") or value.get("step")
+
+        if not value.get("step"):
+            raise Exception("step not found or not a number")
+
+        interval = value.get("interval")
+        # if not interval or len(interval) != 2 or not interval[0].is:
+        #     raise Exception("variation interval not found or not parseable")
+
+        print(value)
+
+        self.interval_max = max(value.get("interval"))
+        self.interval_min = min(value.get("interval"))
+        self.step = value.get("step")
         self.curr = curr
 
         global INPUT_INDEX
@@ -428,10 +438,13 @@ class Input:
         INPUT_INDEX += 1
 
     def get_interval(self) -> tuple[float, float]:
-        return max(*self.interval), min(self.interval)
+        return max(self.interval), min(self.interval)
 
     def get_interval_amplitude(self) -> float:
-        return max(*self.interval) - min(self.interval)
+        return max(self.interval) - min(self.interval)
+
+    def get_variation(self) -> tuple[float, float]:
+        return self.get_interval_amplitude() / self.step
 
 
 class Output:
@@ -602,13 +615,6 @@ class Evaluator:
     def optimize(self, in_fp: AVLFileParser) -> tuple[AVLFileParser, AVLResultParser]:
         iter_count = 0
 
-        step_sizes = []
-        for inp in self.inputs:
-            if inp.min_variation:
-                step_sizes.append(inp.min_variation)
-            else:
-                step_sizes.append(inp.get_interval_amplitude() / self.interval_steps)
-
         x_next = [float(in_fp.get_value(inp.key)) for inp in self.inputs]
 
         print("[main] Getting initial out file...")
@@ -624,7 +630,6 @@ class Evaluator:
             if iter_count > self.max_iter_count:
                 return x_next
             iter_count += 1
-            x_new = x_next.copy()
             x_out_changes = False
             x_inp_changes = False
 
@@ -633,15 +638,23 @@ class Evaluator:
             for inp in self.inputs:
                 indx = self.inputs.index(inp)
 
+                if not last_out_fp:
+                    new_in_fp = self.get_first_variation(inp.index, in_fp)
+                else:
+                    new_in_fp = self.get_subsequent_variation(inp.index, x_next)
+
                 self.thread_queue.add_new_thread_blocking(
                     self.avl.analyse_for_thread,
-                    (in_fp,),
+                    (new_in_fp,),
                     label=int(indx),
                 )
 
             self.thread_queue.wait_all_threads()
 
-            for i in range(len(x_new)):
+            for i in range(len(x_next)):
+                    
+
+
                 if x_next[i] != x_new[i]:
                     print(
                         f"Changed the input {self.inputs[i].key} in x_next versus x_new from {x_next[i]} to {x_new[i]}"
@@ -674,38 +687,31 @@ class Evaluator:
 
         return self.get_in_fp_from_vals(x_next), last_out_fp
 
-    def get_new_variations(
-        self,
-        indx: int,
-        inp: list[float],
-        variation: float,
-    ) -> tuple[float, bool]:
-        # # increase so that a convergance is eventually forced
-        # if iter_count > self.limit_iter_count:
-        #     step_sizes[indx] = step_sizes[indx] * self.limit_variation_factor
+    def get_first_variation(
+        self, indx: int, in_fp: AVLFileParser
+    ) -> list[AVLFileParser]:
+        key = self.inputs[indx].key
+        curr = in_fp.get_value(key)
+        variation = self.inputs[indx].get_variation()
+        res_a = AVLFileParser(structure=in_fp)
+        res_a.set_value(key, curr + variation)
+        res_b = AVLFileParser(structure=in_fp)
+        res_b.set_value(key, curr - variation)
+        return [res_a, res_b]
 
-        in_fp = self.get_in_fp_from_vals(inp)
-        out_fp = self.avl.analyse_from_fp(in_fp)
-        fx, errors, out_fp = self.get_score_from_scorer(in_fp, out_fp)
+    def get_subsequent_variation(
+        self, indx: int, inp: list[float] | None
+    ) -> list[AVLFileParser]:
+        
+        # estamos em uma árvore para variar o atual
+        # vamos ver pra qual direção essa mudança dá melhor resultado
+        # temos o valor x atual e score atual
+        # vamos recalcular quando x + d ou x - d
+        # é melhor x+d ou x-d ou x do jeito que tá?
 
-        if errors is not None:
-            print("ERROS!\n", errors)
 
-        # d = f(x) / (x1 - x2)
-        d = fx / -variation
 
-        # if math.fabs(d*step_sizes[indx]) < min_variation[indx]:
-        #     continue
-        # el
-        print(f"d = {d}")
-        if d > 0:
-            nv = inp[indx] + variation * d
-            inp[indx] = nv
-        else:
-            nv = inp[indx] - variation * d
-            inp[indx] = nv
 
-        return out_fp
 
     def get_score_from_scorer(
         self,
