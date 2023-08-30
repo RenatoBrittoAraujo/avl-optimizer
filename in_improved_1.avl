@@ -62,7 +62,13 @@ TRANSLATE
 #---------------
 SECTION
 #Xle Yle Zle Chord Ainc
+<<<<<<< HEAD:env/in_0.avl
 <__main__.Input object at 0x7fb8180e79d0> 0.0 <__main__.Input object at 0x7fb8180e7a30> <__main__.Input object at 0x7fb8180e7a90> <__main__.Input object at 0x7fb8180e7af0>
+=======
+-1.155000000000001 0.0 -0.09000000000000001 -0.0200000000000001 0.0
+Ainc
+0.0 
+>>>>>>> 4a33cf4db4320e36410c9e990fd9e1d8764ca19a:in_improved_1.avl
 AFILE
 eh_NACA3312_inv.dat 
 #---------------

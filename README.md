@@ -18,9 +18,9 @@ No arquivo `avl_optmizer.py` é possível encontrar a classe `SumScorer(Scorer)`
 
 ## TODO
 
-- Consertar os problemas do arquivo AVL escrito sendo lido incorretamente, que causa o score permanecer exatamente igual quando mudo arquivos via código mas é diferente quando mudo arquivos manualmente
-- O arquivo de entrada muda, o programa é chamado com os comandos corretos, mas o arquivo de saída é exatamente o mesmo??
-- Rodei e só sobrou um arquivo `out_0.txt`
+- Aileron e flaperon. Template tinha `flaperon` mas esse nome é parametrizado.
+- O processo newton raphson não serve, deveria fazer busca ternária
+- ERRO `could not convert string to float: '***********'`  no `curr_out_fp.get_value(key)` pra key = `Cmq`
 
 ## Funcionamento do progama
 

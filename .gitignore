@@ -1,2 +1,4 @@
 __pycache__
 **/__pycache__
+env/in_*.avl
+env/out_*.txt

@@ -1,16 +1,12 @@
 {
   "avl_env_path": "env/",
   "avl_input_file": "in.avl",
-  "avl_output_file": "baseline_out_3.txt",
+  "avl_output_file": "baseline_out.txt",
   "base_input_file": "geometria.avl",
   "final_input_file": "otimizado.avl",
   "final_output_file": "output.txt",
   "templates_folder": "templates/",
-<<<<<<< HEAD
-  "max_threads": 4,
-=======
   "max_threads": 12,
->>>>>>> 4a33cf4db4320e36410c9e990fd9e1d8764ca19a
   "max_iter_count": 200,
   "limit_iter_count": 100,
   "limit_variation_factor": 0.95,
@@ -40,6 +36,66 @@
       "interval": [30, -30],
       "step": 0.01,
       "comentario": "180mm de corda e 700mm de envergadura total pra vertical 175mm de corda e 700mm de envergadura total pra horizontal"
+    },
+    "children.surfaces.emp_horizontal.children.sections.SECTION_2.children.Xle": {
+      "initial_value": -0.05,
+      "interval": [-0.1, 0.1],
+      "step": 0.01,
+      "comentario": "180mm de corda e 700mm de envergadura total pra vertical 175mm de corda e 700mm de envergadura total pra horizontal"
+    },
+    "children.surfaces.emp_horizontal.children.sections.SECTION_2.children.Yle": {
+      "initial_value": 0.2455,
+      "interval": [-0.1, 0.1],
+      "step": 0.01,
+      "comentario": ""
+    },
+    "children.surfaces.emp_horizontal.children.sections.SECTION_2.children.Chord": {
+      "initial_value": 0.2,
+      "interval": [0, 0.2],
+      "step": 0.01,
+      "comentario": "180mm de corda e 700mm de envergadura total pra vertical"
+    },
+    "children.surfaces.emp_horizontal.children.sections.SECTION_2.children.Ainc": {
+      "initial_value": 0.0,
+      "interval": [-30,30],
+      "step": 0.01,
+      "comentario": ""
+    },
+    "children.surfaces.emp_vertical.children.sections.SECTION_1.children.Xle": {
+      "initial_value": 0.09,
+      "interval": [-0.1, 0.1],
+      "step": 0.01,
+      "comentario": ""
+    },
+    "children.surfaces.emp_vertical.children.sections.SECTION_1.children.Zle": {
+      "initial_value": 0.21,
+      "interval": [-0.1, 0.1],
+      "step": 0.01,
+      "comentario": ""
+    },
+    "children.surfaces.emp_vertical.children.sections.SECTION_1.children.Chord": {
+      "initial_value": 0.095,
+      "interval": [0, 0.2],
+      "step": 0.01,
+      "comentario": ""
+    },
+    "children.surfaces.emp_vertical.children.sections.SECTION_2.children.Xle": {
+      "initial_value": 0,
+      "interval": [-0.1, 0.1],
+      "step": 0.01,
+      "comentario": ""
+    },
+    "children.surfaces.emp_vertical.children.sections.SECTION_2.children.Zle": {
+      "initial_value": 0,
+      "interval": [-0.1, 0.1],
+      "step": 0.01,
+      "comentario": ""
+    },
+    "children.surfaces.emp_vertical.children.sections.SECTION_2.children.Chord": {
+      "initial_value": 0.193,
+      "interval": [0, 0.2],
+      "step": 0.1,
+      "comentario": ""
     }
   },
   "outputs": {
