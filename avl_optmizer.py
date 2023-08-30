@@ -372,17 +372,12 @@ class ThreadQueue:
         if tid in self.results:
             result = self.results[tid]
             del self.results[tid]
-<<<<<<< HEAD
-            if tid not in self.running_threads and tid in self.label_map:
-                del self.label_map[tid]
-=======
 
             # [TODO] delete label
             # if tid not in self.running_threads:
             #     label = self.label_map.
             #     del self.label_map[self.la]
 
->>>>>>> 4a33cf4db4320e36410c9e990fd9e1d8764ca19a
             return result
 
         print(
@@ -753,14 +748,10 @@ class Evaluator:
         iter_count = 0
         min_diff = 1e-6
 
-<<<<<<< HEAD
-        x_next = [float(in_fp.get_value(inp.key)) for inp in self.inputs]
-=======
         x_curr = [float(in_fp.get_value(inp.key)) for inp in self.inputs]
 
         curr_in_fp = in_fp
         curr_out_fp = self.output_file
->>>>>>> 4a33cf4db4320e36410c9e990fd9e1d8764ca19a
 
         if curr_out_fp is None:
             print("[main] init file not found. getting initial out file...")
@@ -784,13 +775,8 @@ class Evaluator:
             print(f"p_curr: {p_curr}")
 
             if iter_count > self.max_iter_count:
-<<<<<<< HEAD
-                return x_next
-            iter_count += 1
-=======
                 return x_curr
 
->>>>>>> 4a33cf4db4320e36410c9e990fd9e1d8764ca19a
             x_out_changes = False
             x_inp_changes = False
             inp_size = len(self.inputs)
@@ -803,17 +789,6 @@ class Evaluator:
                     continue
                 n_threads += 2
 
-<<<<<<< HEAD
-                if not last_out_fp:
-                    new_in_fp = self.get_first_variation(inp.index, in_fp)
-                else:
-                    new_in_fp = self.get_subsequent_variation(inp.index, x_next)
-
-                self.thread_queue.add_new_thread_blocking(
-                    self.avl.analyse_for_thread,
-                    (new_in_fp,),
-                    label=int(indx),
-=======
             print(f"[main]  CREATING {n_threads} NEW THREADS")
 
             for i in range(inp_size):
@@ -862,32 +837,12 @@ class Evaluator:
                     procedure=self.avl.analyse_for_thread,
                     args=(new_n_in_fp,),
                     label=label,
->>>>>>> 4a33cf4db4320e36410c9e990fd9e1d8764ca19a
                 )
 
             self.thread_queue.wait_all_threads()
 
-<<<<<<< HEAD
-            for i in range(len(x_next)):
-                    
-
-
-                if x_next[i] != x_new[i]:
-                    print(
-                        f"Changed the input {self.inputs[i].key} in x_next versus x_new from {x_next[i]} to {x_new[i]}"
-                    )
-                    x_inp_changes = True
-
-                out_fp = self.thread_queue.get_thread_result_blocking(str(i))
-                # out_fp = self.output_file
-                last_out_fp = out_fp
-
-                if out_fp is None:
-                    print("out_fp is None!")
-=======
             for i in range(inp_size):
                 if i in skip:
->>>>>>> 4a33cf4db4320e36410c9e990fd9e1d8764ca19a
                     continue
 
                 label = labels[i]
@@ -978,33 +933,6 @@ class Evaluator:
 
             iter_count += 1
 
-<<<<<<< HEAD
-    def get_first_variation(
-        self, indx: int, in_fp: AVLFileParser
-    ) -> list[AVLFileParser]:
-        key = self.inputs[indx].key
-        curr = in_fp.get_value(key)
-        variation = self.inputs[indx].get_variation()
-        res_a = AVLFileParser(structure=in_fp)
-        res_a.set_value(key, curr + variation)
-        res_b = AVLFileParser(structure=in_fp)
-        res_b.set_value(key, curr - variation)
-        return [res_a, res_b]
-
-    def get_subsequent_variation(
-        self, indx: int, inp: list[float] | None
-    ) -> list[AVLFileParser]:
-        
-        # estamos em uma árvore para variar o atual
-        # vamos ver pra qual direção essa mudança dá melhor resultado
-        # temos o valor x atual e score atual
-        # vamos recalcular quando x + d ou x - d
-        # é melhor x+d ou x-d ou x do jeito que tá?
-
-
-
-
-=======
         return self.get_in_fp_from_vals(x_curr), curr_out_fp
 
     def get_default_variation(self, indx: int) -> float:
@@ -1012,7 +940,7 @@ class Evaluator:
             return self.inputs[indx].min_variation
         else:
             return self.inputs[indx].get_interval_amplitude() / self.interval_steps
-        
+
     def get_next_variation(
         self,
         indx: int,
@@ -1039,7 +967,6 @@ class Evaluator:
         # [TODO] VALIDATE NEXT_X IS WITHIN BOUNDS!
 
         return next_x
->>>>>>> 4a33cf4db4320e36410c9e990fd9e1d8764ca19a
 
     def get_score_from_scorer(
         self,
