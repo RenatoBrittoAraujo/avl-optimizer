@@ -1,13 +1,5 @@
-<<<<<<< HEAD
-LOAD in_0.avl
+LOAD in_12.avl
 OPER
 X
 ST
-out_0.txt
-=======
-LOAD in_512.avl
-OPER
-X
-ST
-out_512.txt
->>>>>>> 4a33cf4db4320e36410c9e990fd9e1d8764ca19a
+out_12.txt

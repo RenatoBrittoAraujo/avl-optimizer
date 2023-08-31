@@ -27,11 +27,7 @@
    NAME s  Specify new configuration name
 
  AVL   c>  
-<<<<<<< HEAD
- Reading file: in_0.avl  ...
-=======
- Reading file: in_512.avl  ...
->>>>>>> 4a33cf4db4320e36410c9e990fd9e1d8764ca19a
+ Reading file: in_12.avl  ...
 
  Configuration: WING_2022                                                   
 
@@ -50,23 +46,60 @@
    Building duplicate image-surface: Right_Wing (YDUP)                       
 
    Building surface: emp_horizontal                          
+  * Line   66 ignored: Zle
+  * Line   67 ignored: 0.0
+     Reading airfoil from file: eh_NACA3312_inv.dat
+     Reading airfoil from file: eh_NACA3312_inv.dat
+  
+   Building duplicate image-surface: emp_horizontal (YDUP)                   
 
- ** Read error on line   65 ...
- <__main__.Input object at 0x7fb8180e79d0> 0.0 <__main__.Input object at 0x7fb8180e7a30> <__main__.Input object at 0x7fb8180e7a90> <__main__.Input object at 0x7fb8180e7af0>
- ** File not processed. Current geometry may be corrupted.
+   Building surface: emp_vertical                            
+     Reading airfoil from file: ev_BELL540.dat
+     Reading airfoil from file: ev_BELL540.dat
+
+   Building surface: Fuselage H                              
+  
+   Building duplicate image-surface: Fuselage H (YDUP)                       
+
+   Building surface: Fuselage V                              
+
+ Mach =    0.0000  (default)
+
+    0 Bodies
+    8 Solid surfaces
+  103 Strips
+ 2060 Vortices
+
+    3 Control variables
+    0 Design parameters
+
+ Initializing run cases...
 
  AVL   c>  
- * Configuration not defined
+ Operation of run case 1/1:   -unnamed-                              
+ ==========================================================
 
- AVL   c>   X    command not recognized.  Type a "?" for list
+  variable          constraint              
+  ------------      ------------------------
+  A lpha        ->  alpha       =   0.000         
+  B eta         ->  beta        =   0.000         
+  R oll  rate   ->  pb/2V       =   0.000         
+  P itch rate   ->  qc/2V       =   0.000         
+  Y aw   rate   ->  rb/2V       =   0.000         
+  D1  aileron   ->  aileron     =   0.000         
+  D2  elevator  ->  elevator    =   0.000         
+  D3  rudder    ->  rudder      =   0.000         
+  ------------      ------------------------
 
- AVL   c>   ST   command not recognized.  Type a "?" for list
+  C1  set level or banked  horizontal flight constraints
+  C2  set steady pitch rate (looping) flight constraints
+  M odify parameters                                    
 
- AVL   c>   OUT_ command not recognized.  Type a "?" for list
+ "#" select  run case          L ist defined run cases   
+  +  add new run case          S ave run cases to file   
+  -  delete  run case          F etch run cases from file
+  N ame current run case       W rite forces to file     
 
-<<<<<<< HEAD
- AVL   c>  
-=======
  eX ecute run case             I nitialize variables     
 
   G eometry plot               T refftz Plane plot       
@@ -107,15 +140,15 @@
   Beta  =   0.00000     qc/2V =   0.00000
   Mach  =     0.000     rb/2V =  -0.00000     r'b/2V =  -0.00000
 
-  CXtot =  -0.00005     Cltot =   0.00000     Cl'tot =   0.00000
-  CYtot =   0.00000     Cmtot =   0.01049
-  CZtot =   0.00593     Cntot =  -0.00000     Cn'tot =  -0.00000
+  CXtot =  -0.00296     Cltot =   0.00000     Cl'tot =   0.00000
+  CYtot =   0.00000     Cmtot =   0.25462
+  CZtot =   0.08041     Cntot =  -0.00000     Cn'tot =  -0.00000
 
-  CLtot =  -0.00593
-  CDtot =   0.00005
-  CDvis =   0.00000     CDind = 0.0000503
-  CLff  =  -0.00584     CDff  = 0.0000695    | Trefftz
-  CYff  =   0.00000         e =    0.0218    | Plane  
+  CLtot =  -0.08041
+  CDtot =   0.00296
+  CDvis =   0.00000     CDind = 0.0029553
+  CLff  =  -0.08041     CDff  = 0.0029444    | Trefftz
+  CYff  =   0.00000         e =    0.0977    | Plane  
 
    aileron         =   0.00000
    elevator        =   0.00000
@@ -200,4 +233,3 @@ Enter filename, or <return> for screen output   s>
   MRF  machine-readable format CPOM OML surface pressures
 
  .OPER (case 1/1)   c>  
->>>>>>> 4a33cf4db4320e36410c9e990fd9e1d8764ca19a

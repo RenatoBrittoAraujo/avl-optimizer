@@ -6,11 +6,7 @@
   "final_input_file": "otimizado.avl",
   "final_output_file": "output.txt",
   "templates_folder": "templates/",
-<<<<<<< HEAD
   "max_threads": 4,
-=======
-  "max_threads": 12,
->>>>>>> 4a33cf4db4320e36410c9e990fd9e1d8764ca19a
   "max_iter_count": 200,
   "limit_iter_count": 100,
   "limit_variation_factor": 0.95,

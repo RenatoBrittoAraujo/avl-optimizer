@@ -445,13 +445,13 @@ class Input:
         INPUT_INDEX += 1
 
     def get_interval(self) -> tuple[float, float]:
-        return max(self.interval), min(self.interval)
+        return self.interval_max, self.interval_min
 
     def get_interval_amplitude(self) -> float:
-        return max(self.interval) - min(self.interval)
+        return self.interval_max - self.interval_min
 
     def get_variation(self) -> tuple[float, float]:
-        return self.get_interval_amplitude() / self.step
+        return self.step
 
 
 class Output:
@@ -936,10 +936,7 @@ class Evaluator:
         return self.get_in_fp_from_vals(x_curr), curr_out_fp
 
     def get_default_variation(self, indx: int) -> float:
-        if self.inputs[indx].min_variation is not None:
-            return self.inputs[indx].min_variation
-        else:
-            return self.inputs[indx].get_interval_amplitude() / self.interval_steps
+        return self.inputs[indx].get_variation()
 
     def get_next_variation(
         self,
