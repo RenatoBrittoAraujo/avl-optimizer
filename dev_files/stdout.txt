@@ -27,7 +27,7 @@
    NAME s  Specify new configuration name
 
  AVL   c>  
- Reading file: in_12.avl  ...
+ Reading file: in_18.avl  ...
 
  Configuration: WING_2022                                                   
 
@@ -46,8 +46,6 @@
    Building duplicate image-surface: Right_Wing (YDUP)                       
 
    Building surface: emp_horizontal                          
-  * Line   66 ignored: Zle
-  * Line   67 ignored: 0.0
      Reading airfoil from file: eh_NACA3312_inv.dat
      Reading airfoil from file: eh_NACA3312_inv.dat
   
@@ -140,15 +138,15 @@
   Beta  =   0.00000     qc/2V =   0.00000
   Mach  =     0.000     rb/2V =  -0.00000     r'b/2V =  -0.00000
 
-  CXtot =  -0.00296     Cltot =   0.00000     Cl'tot =   0.00000
-  CYtot =   0.00000     Cmtot =   0.25462
-  CZtot =   0.08041     Cntot =  -0.00000     Cn'tot =  -0.00000
+  CXtot =  -0.00075     Cltot =   0.00000     Cl'tot =   0.00000
+  CYtot =   0.00000     Cmtot =   0.13129
+  CZtot =   0.04001     Cntot =  -0.00000     Cn'tot =  -0.00000
 
-  CLtot =  -0.08041
-  CDtot =   0.00296
-  CDvis =   0.00000     CDind = 0.0029553
-  CLff  =  -0.08041     CDff  = 0.0029444    | Trefftz
-  CYff  =   0.00000         e =    0.0977    | Plane  
+  CLtot =  -0.04001
+  CDtot =   0.00075
+  CDvis =   0.00000     CDind = 0.0007536
+  CLff  =  -0.04006     CDff  = 0.0007442    | Trefftz
+  CYff  =   0.00000         e =    0.0960    | Plane  
 
    aileron         =   0.00000
    elevator        =   0.00000

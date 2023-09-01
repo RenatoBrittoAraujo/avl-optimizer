@@ -1,10 +1,10 @@
-IP = 
-USER = ubuntu
+IP = 192.168.0.8
+USER = renato-lenovo
 PORT = 22
-ID_FILE = 
-PRJ_NAME = 
+ID_FILE = ~/.ssh/personal-infra-key.pem
+PRJ_NAME = t1
 SERVER_PROJECT_PATH = /home/$(USER)/$(PRJ_NAME)
-PATH_MY_OS = 
+PATH_MY_OS = /home/renato/Desktop/avl-optmizer/$(PRJ_NAME)
 
 deps:
 	sudo apt install make

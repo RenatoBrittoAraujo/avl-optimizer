@@ -1,0 +1,9 @@
+# runs 3 containers for 3 instances of rasp 
+version: '3'
+
+services:
+  main:
+    build: .
+    container_name: avl_optimizer
+    volumes:
+      - ./:/app

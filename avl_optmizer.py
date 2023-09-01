@@ -236,7 +236,7 @@ class AVL:
         write_file(inf, in_fp.parse_into_file())
 
         process = self.analyse_v1(str(nid), inf, ouf)
-        # print(f"process out: {process.stdout.decode('utf-8')}")
+        print(f"process out: {process.stdout.decode('utf-8')}")
 
         res_str = read_file(ouf)
         res_fp = AVLResultParser(arquivo=res_str)
@@ -428,10 +428,8 @@ class Input:
             raise Exception("step not found or not a number")
 
         interval = value.get("interval")
-        # if not interval or len(interval) != 2 or not interval[0].is:
-        #     raise Exception("variation interval not found or not parseable")
-
-        print(value)
+        if not interval or len(interval) != 2:
+            raise Exception("variation interval not found or not parseable")
 
         self.interval_max = max(value.get("interval"))
         self.interval_min = min(value.get("interval"))
@@ -961,7 +959,10 @@ class Evaluator:
 
         next_x = x_curr - p_curr / derivative
 
-        # [TODO] VALIDATE NEXT_X IS WITHIN BOUNDS!
+        if self.inputs[indx].interval_max < next_x:
+            next_x = self.inputs[indx].interval_max
+        if self.inputs[indx].interval_min > next_x:
+            next_x = self.inputs[indx].interval_min
 
         return next_x
 
